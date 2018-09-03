@@ -9,7 +9,7 @@ jdk:
 - oraclejdk10
 
 script:
-- mvn clean install -Pjacoco coveralls:report
+- mvn clean install
 
 
   

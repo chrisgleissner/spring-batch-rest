@@ -7,7 +7,7 @@ REST API for Spring Batch, based on Spring MVC and Spring Boot.
 
 ## Util
 
-[AdHocScheduler](https://github.com/chrisgleissner/spring-batch-rest/blob/master/spring-batch/src/main/java/uk/gleissner/springbatchrest/util/adhoc/AdHocScheduler.java)
+[AdHocScheduler](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/AdHocScheduler.java)
 
 Ad-hoc scheduler to register and trigger Spring Batch jobs using Quartz CRON triggers at run-time rather than Spring
 wiring time. This allows for simplified set-up of a large number of jobs that only differ slightly.

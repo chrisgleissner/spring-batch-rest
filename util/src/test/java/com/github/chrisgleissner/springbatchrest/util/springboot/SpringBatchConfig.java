@@ -34,7 +34,7 @@ public class SpringBatchConfig {
     public FlatFileItemReader<Person> reader() {
         return new FlatFileItemReaderBuilder<Person>()
                 .name("personItemReader")
-                .resource(new ClassPathResource("sample-data.csv"))
+                .resource(new ClassPathResource("/sample-data.csv"))
                 .delimited()
                 .names(new String[]{"firstName", "lastName"})
                 .fieldSetMapper(new BeanWrapperFieldSetMapper<Person>() {{

@@ -17,3 +17,13 @@ Example:
 adHocScheduler.schedule("jobName", () -> job, "0/30 * * * * ?");
 
 ```
+
+[AdHocStarter](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/AdHocStarter.java)
+
+Ad-hoc starter to immediately launch jobs and `Runnable`s asynchronously.
+
+Example:
+```java
+adHocStarter.start("jobName", () -> System.out.println("Running job"), new JobParameters());
+
+```

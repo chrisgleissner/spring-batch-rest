@@ -7,12 +7,18 @@ import org.springframework.batch.core.configuration.JobLocator;
 import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.launch.support.SimpleJobLauncher;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor;
 
 import javax.sql.DataSource;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static com.github.chrisgleissner.springbatchrest.util.adhoc.QuartzJobLauncher.JOB_LAUNCHER;
 import static com.github.chrisgleissner.springbatchrest.util.adhoc.QuartzJobLauncher.JOB_LOCATOR;
@@ -20,13 +26,18 @@ import static com.github.chrisgleissner.springbatchrest.util.adhoc.QuartzJobLaun
 @Configuration
 @ComponentScan
 @EnableBatchProcessing
-public class AdHocSchedulerConfig extends DefaultBatchConfigurer {
+public class AdHocBatchConfig extends DefaultBatchConfigurer {
+
+    @Autowired
+    private JobRepository jobRepository;
 
     @Autowired
     private JobLocator jobLocator;
 
     @Autowired
     private JobLauncher jobLauncher;
+
+    private ExecutorService executorService = Executors.newCachedThreadPool();
 
     @Override
     public void setDataSource(DataSource dataSource) {
@@ -40,5 +51,13 @@ public class AdHocSchedulerConfig extends DefaultBatchConfigurer {
         scheduler.getContext().put(JOB_LOCATOR, jobLocator);
         scheduler.getContext().put(JOB_LAUNCHER, jobLauncher);
         return scheduler;
+    }
+
+    protected JobLauncher createJobLauncher() throws Exception {
+        SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
+        jobLauncher.setJobRepository(jobRepository);
+        jobLauncher.setTaskExecutor(new ConcurrentTaskExecutor(executorService));
+        jobLauncher.afterPropertiesSet();
+        return jobLauncher;
     }
 }

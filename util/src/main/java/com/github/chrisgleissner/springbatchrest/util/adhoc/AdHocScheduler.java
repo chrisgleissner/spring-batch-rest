@@ -38,7 +38,7 @@ public class AdHocScheduler {
     private StepBuilderFactory stepBuilderFactory;
 
     @Autowired
-    public AdHocScheduler(JobRegistry jobRegistry,Scheduler scheduler, JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
+    public AdHocScheduler(JobRegistry jobRegistry, Scheduler scheduler, JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
         this.jobRegistry = jobRegistry;
         this.scheduler = scheduler;
         this.jobBuilderFactory = jobBuilderFactory;
@@ -48,12 +48,12 @@ public class AdHocScheduler {
     /**
      * Schedules a Spring Batch job via a Quartz cron expression.
      */
-    public void schedule(String jobName, Supplier<Job> jobSupplier, String cronExpression) throws DuplicateJobException {
+    public void schedule(String jobName, Job job, String cronExpression) throws DuplicateJobException {
         logger.debug("Scheduling job {} with CRON expression {}", jobName, cronExpression);
         jobRegistry.register(new JobFactory() {
             @Override
             public Job createJob() {
-                return jobSupplier.get();
+                return job;
             }
 
             @Override

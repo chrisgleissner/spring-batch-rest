@@ -1,7 +1,7 @@
 package com.github.chrisgleissner.springbatchrest.api;
 
 import com.github.chrisgleissner.springbatchrest.util.adhoc.AdHocScheduler;
-import com.github.chrisgleissner.springbatchrest.util.adhoc.AdHocSchedulerConfig;
+import com.github.chrisgleissner.springbatchrest.util.adhoc.AdHocBatchConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +33,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 public class ServerTest {
 
     @TestConfiguration
-    @Import(AdHocSchedulerConfig.class)
+    @Import(AdHocBatchConfig.class)
     public static class MyConfig {
     }
 
@@ -62,7 +62,7 @@ public class ServerTest {
         if (firstExecution.compareAndSet(false, true)) {
             scheduler.schedule(
                     JOB_NAME,
-                    () -> scheduler.jobs().get(JOB_NAME)
+                    scheduler.jobs().get(JOB_NAME)
                             .incrementer(new RunIdIncrementer()) // adds unique parameter on each run so that job can be rerun
                             .flow(scheduler.steps().get("step")
                                     .<Integer, String>chunk(30)

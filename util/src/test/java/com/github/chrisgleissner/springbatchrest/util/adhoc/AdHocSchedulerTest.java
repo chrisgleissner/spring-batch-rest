@@ -4,12 +4,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.DuplicateJobException;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.step.tasklet.TaskletStep;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +16,6 @@ import com.github.chrisgleissner.springbatchrest.util.CacheItemWriter;
 import com.github.chrisgleissner.springbatchrest.util.JobCompletionNotificationListener;
 import com.github.chrisgleissner.springbatchrest.util.Person;
 
-import java.util.function.Supplier;
-
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -29,7 +23,7 @@ import static org.junit.Assert.assertThat;
  * Tests the ad-hoc Quartz scheduling of Spring Batch jobs, allowing for programmatic scheduling after Spring wiring.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = AdHocSchedulerConfig.class)
+@ContextConfiguration(classes = AdHocBatchConfig.class)
 public class AdHocSchedulerTest {
 
     private static final String CRON_SCHEDULE_TO_TRIGGER_EVERY_SECOND = "0/1 * * * * ?";
@@ -64,8 +58,8 @@ public class AdHocSchedulerTest {
         assertThat(writer.getItems().iterator().next().getFirstName(), is("JILL"));
     }
 
-    private Supplier<Job> csvImportJobSupplier(String jobName, String csvFilename) {
-        return () -> scheduler.jobs().get(jobName)
+    private Job csvImportJobSupplier(String jobName, String csvFilename) {
+        return scheduler.jobs().get(jobName)
                 .incrementer(new RunIdIncrementer()) // adds unique parameter on each run so that job can be rerun
                 .listener(listener)
                 .flow(scheduler.steps().get("step")

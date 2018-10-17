@@ -6,7 +6,8 @@ cache:
 
 jdk:
 - oraclejdk8
-- oraclejdk10
+- oraclejdk11
+- openjdk11
 
 script:
 - mvn clean install -Pjacoco coveralls:report

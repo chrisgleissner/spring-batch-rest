@@ -14,17 +14,16 @@ wiring time. This allows for simplified set-up of a large number of jobs that on
 
 Example:
 ```java
-adHocScheduler.schedule("jobName", () -> job, "0/30 * * * * ?");
-
+adHocScheduler.schedule("jobName", job, "0/30 * * * * ?");
 ```
 
 [AdHocStarter](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/AdHocStarter.java)
 
-Ad-hoc starter to immediately launch jobs and `Runnable`s asynchronously. This simplifies the syntax normally
+Ad-hoc starter to immediately launch jobs or `java.util.function.Consumer`s asynchronously. This simplifies the syntax normally
 involved with defining Spring Batch jobs.
 
 Example:
 ```java
-adHocStarter.start("jobName", () -> System.out.println("Running job"), new JobParameters());
+adHocStarter.start("jobName", params -> System.out.println("Running job with params " + params), new JobParameters());
 
 ```

@@ -29,7 +29,7 @@ public class AdHocStarterTest {
             CountDownLatch latch = new CountDownLatch(numberOfJobsPerIteration);
             for (int j = 0; j < numberOfJobsPerIteration; j++) {
                 String jobName = "AdHocStarterTest" + j;
-                starter.start(jobName, () -> {
+                starter.start(jobName, params -> {
                     log.info("Running " + jobName);
                     latch.countDown();
                 }, new JobParameters());

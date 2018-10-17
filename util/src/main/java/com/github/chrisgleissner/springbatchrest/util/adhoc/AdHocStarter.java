@@ -15,6 +15,8 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.stereotype.Component;
 
+import java.util.function.Consumer;
+
 import static org.springframework.batch.repeat.RepeatStatus.FINISHED;
 
 @Slf4j
@@ -41,10 +43,10 @@ public class AdHocStarter {
         }
     }
 
-    public JobExecution start(String jobName, Runnable runnable, JobParameters jobParameters) {
+    public JobExecution start(String jobName, Consumer<JobParameters> consumer, JobParameters jobParameters) {
         Job job = jobs.get(jobName)
-                .incrementer(new RunIdIncrementer()) // adds unique parameter on each run so that job can be rerun
-                .flow(steps.get("step").allowStartIfComplete(true).tasklet(new RunnableTaskletAdapter(runnable)).build())
+                .incrementer(new RunIdIncrementer())
+                .flow(steps.get("step").allowStartIfComplete(true).tasklet(new ConsumerTaskletAdapter(consumer, jobParameters)).build())
                 .end().build();
         return start(job, jobParameters);
     }
@@ -58,16 +60,18 @@ public class AdHocStarter {
         }
     }
 
-    private class RunnableTaskletAdapter implements Tasklet {
-        private Runnable runnable;
+    private class ConsumerTaskletAdapter implements Tasklet {
+        private final JobParameters parameters;
+        private Consumer<JobParameters> consumer;
 
-        public RunnableTaskletAdapter(Runnable runnable) {
-            this.runnable = runnable;
+        public ConsumerTaskletAdapter(Consumer<JobParameters> consumer, JobParameters parameters) {
+            this.consumer = consumer;
+            this.parameters = parameters;
         }
 
         @Override
         public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
-            runnable.run();
+            consumer.accept(parameters);
             return FINISHED;
         }
     }

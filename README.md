@@ -20,7 +20,8 @@ adHocScheduler.schedule("jobName", () -> job, "0/30 * * * * ?");
 
 [AdHocStarter](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/AdHocStarter.java)
 
-Ad-hoc starter to immediately launch jobs and `Runnable`s asynchronously.
+Ad-hoc starter to immediately launch jobs and `Runnable`s asynchronously. This simplifies the syntax normally
+involved with defining Spring Batch jobs.
 
 Example:
 ```java

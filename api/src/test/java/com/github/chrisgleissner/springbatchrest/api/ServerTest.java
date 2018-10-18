@@ -106,6 +106,12 @@ public class ServerTest {
                 .contains(CRON_EXPRESSION).contains(JOB_NAME);
     }
 
+    @Test
+    public void swagger() {
+        assertThat(this.restTemplate.getForObject(url("v2/api-docs"), String.class))
+                .contains("{\"swagger\":\"2.0\"");
+    }
+
     private String url(String path) {
         return "http://localhost:" + port + path;
     }

@@ -7,7 +7,7 @@
      <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.0.4.RELEASE</version>
+        <version>2.0.6.RELEASE</version>
     </parent>
 
     <groupId>com.github.chrisgleissner</groupId>
@@ -56,6 +56,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+
+        <byte-buddy.version>1.9.2</byte-buddy.version>
+        <mockito.version>2.23.0</mockito.version>
+        <swagger.version>2.9.2</swagger.version>
     </properties>
 
     <modules>

@@ -20,7 +20,7 @@ import static org.quartz.TriggerBuilder.newTrigger;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * Allows to schedule Spring Batch jobs via Quartz by using a {@link #schedule(String, Supplier, String)} method
+ * Allows to schedule Spring Batch jobs via Quartz by using a {@link #schedule(String, Job, String)} method
  * rather than Spring wiring each job. This allows for programmatic creation of multiple jobs at run-time.
  */
 @Component

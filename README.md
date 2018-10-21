@@ -47,7 +47,7 @@ String myProperty = JobPropertyResolvers.JobProperties.of("myJobName").getProper
 int myIntProperty = JobPropertyResolvers.JobProperties.of("myJobName").getProperty("myIntPropertyName", Integer.class, 2);
 ```
 
-## Util
+### Utilities
 
 This project also contains utilities for starting or scheduling Spring Batch jobs ad-hoc, with minimal use of Spring.
 

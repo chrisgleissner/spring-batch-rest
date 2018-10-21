@@ -1,17 +1,29 @@
 package com.github.chrisgleissner.springbatchrest.api.jobexecution;
 
+import com.github.chrisgleissner.springbatchrest.api.job.Job;
+import com.github.chrisgleissner.springbatchrest.util.adhoc.AdHocStarter;
+import com.github.chrisgleissner.springbatchrest.util.adhoc.JobConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobInstance;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.configuration.JobLocator;
 import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.launch.NoSuchJobException;
+import org.springframework.batch.core.launch.support.SimpleJobLauncher;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static com.github.chrisgleissner.springbatchrest.api.jobexecution.JobExecution.fromSpring;
 import static java.lang.Integer.MAX_VALUE;
+import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -19,16 +31,17 @@ import static java.util.stream.Collectors.toSet;
 public class JobExecutionService {
 
     private final static Logger logger = LoggerFactory.getLogger(JobExecutionService.class);
-
-    private JobExplorer jobExplorer;
+    private final AdHocStarter adHocStarter;
+    private final JobExplorer jobExplorer;
 
     @Autowired
-    public JobExecutionService(JobExplorer jobExplorer) {
+    public JobExecutionService(JobExplorer jobExplorer, AdHocStarter adHocStarter) {
         this.jobExplorer = jobExplorer;
+        this.adHocStarter = adHocStarter;
     }
 
     public JobExecution jobExecution(long executionId) {
-        return JobExecution.fromSpring(null, jobExplorer.getJobExecution(executionId));
+        return fromSpring(jobExplorer.getJobExecution(executionId));
 
     }
 
@@ -36,7 +49,7 @@ public class JobExecutionService {
                                                   Optional<ExitStatus> exitStatus,
                                                   Optional<Integer> maxNumberOfJobInstances,
                                                   Optional<Integer> maxNumberOfJobExecutionsPerInstance) {
-        logger.debug("Getting job excecutions(jobNameRegexp={}, exitStatus={}, maxNumberOfJobInstances{}, maxNumberOfJobExecutionsPerInstance={}",
+        logger.debug("Getting createJob excecutions(jobNameRegexp={}, exitStatus={}, maxNumberOfJobInstances{}, maxNumberOfJobExecutionsPerInstance={}",
                 jobNameRegexp, exitStatus, maxNumberOfJobInstances, maxNumberOfJobExecutionsPerInstance);
 
         Set<JobExecution> allJobExecutions = new TreeSet<>();
@@ -55,14 +68,22 @@ public class JobExecutionService {
                 for (JobInstance jobInstance : jobInstances) {
                     List<JobExecution> jobExecutions = jobExplorer.getJobExecutions(jobInstance).stream()
                             .limit(maxNumberOfJobExecutionsPerInstance.orElse(MAX_VALUE))
-                            .map(je -> JobExecution.fromSpring(jobName, je))
+                            .map(JobExecution::fromSpring)
                             .collect(toList());
                     allJobExecutions.addAll(jobExecutions);
                 }
             } catch (Exception e) {
-                logger.warn("Could not get job executions for job {}", jobName, e);
+                logger.warn("Could not get executions for job {}", jobName, e);
             }
         }
         return allJobExecutions.stream().filter(je -> !exitStatus.isPresent() || exitStatus.get().equals(je.getExitStatus())).collect(toSet());
+    }
+
+    public JobExecution launch(JobConfig jobConfig) {
+        return fromSpring(adHocStarter.start(jobConfig));
+    }
+
+    public Job job(String jobName) {
+        return new Job(jobName);
     }
 }

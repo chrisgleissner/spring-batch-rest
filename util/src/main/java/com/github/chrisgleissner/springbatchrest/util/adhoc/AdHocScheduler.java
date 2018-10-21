@@ -3,11 +3,9 @@ package com.github.chrisgleissner.springbatchrest.util.adhoc;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
+import org.quartz.TriggerKey;
 import org.slf4j.Logger;
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.configuration.DuplicateJobException;
-import org.springframework.batch.core.configuration.JobFactory;
-import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +20,7 @@ import static org.quartz.TriggerBuilder.newTrigger;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * Allows to schedule Spring Batch jobs via Quartz by using a {@link #schedule(String, Supplier, String)} method
+ * Allows to schedule Spring Batch jobs via Quartz by using a {@link #schedule(String, Job, String)} method
  * rather than Spring wiring each job. This allows for programmatic creation of multiple jobs at run-time.
  */
 @Component
@@ -32,14 +30,14 @@ public class AdHocScheduler {
 
     private static final String GROUP_NAME = "group";
 
-    private JobRegistry jobRegistry;
+    private final JobBuilder jobBuilder;
     private Scheduler scheduler;
     private JobBuilderFactory jobBuilderFactory;
     private StepBuilderFactory stepBuilderFactory;
 
     @Autowired
-    public AdHocScheduler(JobRegistry jobRegistry, Scheduler scheduler, JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
-        this.jobRegistry = jobRegistry;
+    public AdHocScheduler(JobBuilder jobBuilder, Scheduler scheduler, JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
+        this.jobBuilder = jobBuilder;
         this.scheduler = scheduler;
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
@@ -48,21 +46,10 @@ public class AdHocScheduler {
     /**
      * Schedules a Spring Batch job via a Quartz cron expression.
      */
-    public void schedule(String jobName, Job job, String cronExpression) throws DuplicateJobException {
+    public void schedule(String jobName, Job job, String cronExpression) {
         logger.debug("Scheduling job {} with CRON expression {}", jobName, cronExpression);
-        jobRegistry.register(new JobFactory() {
-            @Override
-            public Job createJob() {
-                return job;
-            }
-
-            @Override
-            public String getJobName() {
-                return jobName;
-            }
-        });
-
         try {
+            jobBuilder.registerJob(job);
             JobDetail jobDetail = newJob(QuartzJobLauncher.class)
                     .withIdentity(jobName, GROUP_NAME)
                     .usingJobData(QuartzJobLauncher.JOB_NAME, jobName)
@@ -74,6 +61,7 @@ public class AdHocScheduler {
                     .forJob(jobName, GROUP_NAME)
                     .build();
 
+            scheduler.unscheduleJob(trigger.getKey());
             scheduler.scheduleJob(jobDetail, trigger);
             logger.info("Scheduled job {} with CRON expression {}", jobName, cronExpression);
         } catch (Exception e) {
@@ -94,6 +82,32 @@ public class AdHocScheduler {
             }
         } catch (Exception e) {
             throw new RuntimeException("Could not start Quartz scheduler", e);
+        }
+    }
+
+    public void pause() {
+        try {
+            scheduler.pauseAll();
+            logger.info("Paused Quartz scheduler");
+        } catch (Exception e) {
+            throw new RuntimeException("Could not pause Quartz scheduler", e);
+        }
+    }
+
+    public void resume() {
+        try {
+            scheduler.resumeAll();
+            logger.info("Resumed Quartz scheduler");
+        } catch (Exception e) {
+            throw new RuntimeException("Could not resumse Quartz scheduler", e);
+        }
+    }
+    public void stop() {
+        try {
+            scheduler.shutdown();
+            logger.info("Stopped Quartz scheduler");
+        } catch (Exception e) {
+            throw new RuntimeException("Could not stop Quartz scheduler", e);
         }
     }
 

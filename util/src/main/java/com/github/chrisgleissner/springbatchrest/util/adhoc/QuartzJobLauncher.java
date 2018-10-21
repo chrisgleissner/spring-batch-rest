@@ -22,19 +22,20 @@ public class QuartzJobLauncher extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
+        String jobName = null;
         try {
             JobDataMap dataMap = context.getJobDetail().getJobDataMap();
-            String jobName = dataMap.getString(JOB_NAME);
+            jobName = dataMap.getString(JOB_NAME);
 
             JobLocator jobLocator = (JobLocator) context.getScheduler().getContext().get(JOB_LOCATOR);
             JobLauncher jobLauncher = (JobLauncher) context.getScheduler().getContext().get(JOB_LAUNCHER);
 
             Job job = jobLocator.getJob(jobName);
-            logger.info("Starting job {}", job.getName());
+            logger.info("Starting {}", job.getName());
             JobExecution jobExecution = jobLauncher.run(job, new JobParameters());
             logger.info("{}_{} was completed successfully", job.getName(), jobExecution.getId());
         } catch (Exception e) {
-            logger.error("Encountered job execution exception", e);
+            logger.error("Job {} failed", jobName, e);
         }
     }
 }

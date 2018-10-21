@@ -1,5 +1,6 @@
 package com.github.chrisgleissner.springbatchrest.util.springboot;
 
+import org.quartz.SchedulerException;
 import org.springframework.batch.core.configuration.JobLocator;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor;
@@ -11,6 +12,7 @@ import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
+import javax.annotation.PreDestroy;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +24,8 @@ public class QuartzConfig {
 
     @Autowired
     private JobLocator jobLocator;
+
+    private SchedulerFactoryBean scheduler;
 
     @Bean
     public JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor(JobRegistry jobRegistry) {
@@ -52,8 +56,14 @@ public class QuartzConfig {
 
     @Bean
     public SchedulerFactoryBean schedulerFactoryBean() {
-        SchedulerFactoryBean scheduler = new SchedulerFactoryBean();
+        scheduler = new SchedulerFactoryBean();
         scheduler.setTriggers(cronTriggerFactoryBean().getObject());
         return scheduler;
+    }
+
+    @PreDestroy
+    public void preDestroy() throws SchedulerException {
+        scheduler.stop();
+        scheduler.destroy();
     }
 }

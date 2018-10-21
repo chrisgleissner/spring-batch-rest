@@ -12,7 +12,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping(value = "/jobDetail", produces = "application/hal+json")
+@RequestMapping(value = "/jobDetails", produces = "application/hal+json")
 public class JobDetailController {
 
     @Autowired

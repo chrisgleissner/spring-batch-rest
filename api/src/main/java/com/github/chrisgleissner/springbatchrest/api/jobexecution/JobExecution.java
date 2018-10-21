@@ -1,5 +1,9 @@
 package com.github.chrisgleissner.springbatchrest.api.jobexecution;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.github.chrisgleissner.springbatchrest.util.DateUtil;
 import com.google.common.base.Throwables;
 import lombok.Builder;
@@ -7,6 +11,7 @@ import lombok.Value;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
@@ -16,11 +21,11 @@ import static java.util.stream.Collectors.toList;
 @Builder
 public class JobExecution implements Comparable<JobExecution> {
 
-    public static JobExecution fromSpring(String jobName, org.springframework.batch.core.JobExecution je) {
+    public static JobExecution fromSpring(org.springframework.batch.core.JobExecution je) {
         return JobExecution.builder()
                 .jobId(je.getJobId())
                 .id(je.getId())
-                .jobName(jobName)
+                .jobName(je.getJobInstance().getJobName())
                 .startTime(DateUtil.localDateTime(je.getStartTime()))
                 .endTime(DateUtil.localDateTime(je.getEndTime()))
                 .exitStatus(je.getExitStatus())
@@ -34,10 +39,11 @@ public class JobExecution implements Comparable<JobExecution> {
     private String jobName;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    @JsonSerialize(using = ExitStatusSerializer.class)
     private ExitStatus exitStatus;
+    @JsonSerialize(using = BatchStatusSerializer.class)
     private BatchStatus status;
     private Collection<String> exceptions;
-
 
     @Override
     public int compareTo(JobExecution o) {
@@ -47,5 +53,19 @@ public class JobExecution implements Comparable<JobExecution> {
         if (result == 0)
             result = jobId > o.jobId ? 1 : (jobId < o.jobId ? -1 : 0);
         return result;
+    }
+
+    static class ExitStatusSerializer extends JsonSerializer<ExitStatus> {
+        @Override
+        public void serialize(ExitStatus exitStatus, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+            jsonGenerator.writeString(exitStatus.getExitCode());
+        }
+    }
+
+    static class BatchStatusSerializer extends JsonSerializer<BatchStatus> {
+        @Override
+        public void serialize(BatchStatus batchStatus, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+            jsonGenerator.writeString(batchStatus.name());
+        }
     }
 }

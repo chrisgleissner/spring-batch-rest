@@ -1,6 +1,7 @@
 package com.github.chrisgleissner.springbatchrest.api.jobdetail;
 
 import com.github.chrisgleissner.springbatchrest.util.DateUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import static java.util.stream.Collectors.toList;
 import static org.quartz.impl.matchers.GroupMatcher.jobGroupEquals;
 import static com.github.chrisgleissner.springbatchrest.util.adhoc.QuartzJobLauncher.JOB_NAME;
 
+@Slf4j
 @Service
 public class JobDetailService {
 
@@ -37,6 +39,7 @@ public class JobDetailService {
                     .filter(d -> springBatchJobName.isPresent() ? d.getSpringBatchJobName().get().equals(springBatchJobName.get()) : true)
                     .collect(toList());
         } catch (Exception e) {
+            log.error("Couldn't get job details", e);
             throw new RuntimeException("Couldn't get job details", e);
         }
     }
@@ -67,6 +70,7 @@ public class JobDetailService {
                     .previousFireTime(DateUtil.localDateTime(previousFireTime))
                     .cronExpression(Optional.ofNullable(cronExpression)).build();
         } catch (Exception e) {
+            log.error("Couldn't get job detail", e);
             throw new RuntimeException(format("Couldn't get job detail for group name '%s' and job name '%s'", quartzGroupName, quartzJobName), e);
         }
 

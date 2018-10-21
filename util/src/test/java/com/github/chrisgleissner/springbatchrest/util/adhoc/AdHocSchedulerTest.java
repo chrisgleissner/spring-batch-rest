@@ -60,7 +60,7 @@ public class AdHocSchedulerTest {
 
     private Job csvImportJobSupplier(String jobName, String csvFilename) {
         return scheduler.jobs().get(jobName)
-                .incrementer(new RunIdIncrementer()) // adds unique parameter on each run so that job can be rerun
+                .incrementer(new RunIdIncrementer()) // adds unique parameter on each run so that createJob can be rerun
                 .listener(listener)
                 .flow(scheduler.steps().get("step")
                         .<Person, Person>chunk(10)

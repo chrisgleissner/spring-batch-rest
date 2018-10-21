@@ -1,17 +1,23 @@
 package com.github.chrisgleissner.springbatchrest.api.job;
 
-import lombok.Getter;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.hateoas.ResourceSupport;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-@Getter
 public class JobResource extends ResourceSupport {
-    private final Job job;
+    private Job job;
+
+    // For Jackson
+    private JobResource() {}
 
     public JobResource(final Job job) {
         this.job = job;
         add(linkTo(methodOn(JobController.class).get(job.getName())).withSelfRel());
+    }
+
+    public Job getJob() {
+        return job;
     }
 }

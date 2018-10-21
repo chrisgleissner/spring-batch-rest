@@ -1,5 +1,6 @@
 package com.github.chrisgleissner.springbatchrest.api.jobdetail;
 
+import com.github.chrisgleissner.springbatchrest.util.adhoc.AdHocStarter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.junit.Before;
@@ -9,8 +10,11 @@ import org.quartz.*;
 import org.quartz.impl.JobDetailImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import com.github.chrisgleissner.springbatchrest.util.adhoc.QuartzJobLauncher;
@@ -29,12 +33,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest
 public class JobDetailControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private AdHocStarter adHocStarter;
 
     @MockBean
     private Scheduler scheduler;
@@ -58,7 +64,7 @@ public class JobDetailControllerTest {
 
     @Test
     public void jobDetail() throws Exception {
-        mockMvc.perform(get("/jobDetail/g1/j1"))
+        mockMvc.perform(get("/jobDetails/g1/j1"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..jobDetail", hasSize(1)));
@@ -66,7 +72,7 @@ public class JobDetailControllerTest {
 
     @Test
     public void jobDetails() throws Exception {
-        mockMvc.perform(get("/jobDetail"))
+        mockMvc.perform(get("/jobDetails"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..jobDetail", hasSize(2)));

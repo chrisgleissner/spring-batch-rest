@@ -1,7 +1,9 @@
 package com.github.chrisgleissner.springbatchrest.api.jobexecution;
 
+import com.github.chrisgleissner.springbatchrest.util.adhoc.JobConfig;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +15,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping(value = "/jobExecution", produces = "application/hal+json")
+@RequestMapping(value = "/jobExecutions", produces = "application/hal+json")
 public class JobExecutionController {
 
     @Autowired
@@ -37,5 +39,11 @@ public class JobExecutionController {
                 Optional.ofNullable(maxNumberOfJobExecutionsPerInstance)).stream().map(JobExecutionResource::new).collect(Collectors.toList());
         return new Resources<>(jobExecutions, linkTo(methodOn(JobExecutionController.class)
                 .all(jobName, exitStatus, maxNumberOfJobInstances, maxNumberOfJobExecutionsPerInstance)).withSelfRel());
+    }
+
+
+    @PostMapping
+    public JobExecutionResource put(@RequestBody JobConfig jobConfig) {
+        return new JobExecutionResource(jobExecutionService.launch(jobConfig));
     }
 }

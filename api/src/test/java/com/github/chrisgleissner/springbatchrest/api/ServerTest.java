@@ -1,114 +1,121 @@
 package com.github.chrisgleissner.springbatchrest.api;
 
-import com.github.chrisgleissner.springbatchrest.util.adhoc.AdHocScheduler;
+import com.github.chrisgleissner.springbatchrest.api.jobexecution.JobExecution;
+import com.github.chrisgleissner.springbatchrest.api.jobexecution.JobExecutionResource;
 import com.github.chrisgleissner.springbatchrest.util.adhoc.AdHocBatchConfig;
+import com.github.chrisgleissner.springbatchrest.util.adhoc.AdHocScheduler;
+import com.github.chrisgleissner.springbatchrest.util.adhoc.JobBuilder;
+import com.github.chrisgleissner.springbatchrest.util.adhoc.JobConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.springframework.batch.core.configuration.DuplicateJobException;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.core.Job;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.github.chrisgleissner.springbatchrest.util.adhoc.property.JobPropertyResolvers.JobProperties;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.slf4j.LoggerFactory.getLogger;
+import static org.springframework.batch.core.ExitStatus.COMPLETED;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = DEFINED_PORT)
+@TestPropertySource(properties = "ServerTest-property=0")
+@Import(AdHocBatchConfig.class)
 public class ServerTest {
 
-    @TestConfiguration
-    @Import(AdHocBatchConfig.class)
-    public static class MyConfig {
-    }
-
-    private static final Logger logger = getLogger(ServerTest.class);
+    private static final String JOB_NAME = "ServerTest-job";
+    private static final String PROPERTY_NAME = "ServerTest-property";
     private static final String CRON_EXPRESSION = "0/1 * * * * ?";
-    private static final String JOB_NAME = "testJob";
-    private static final int MAX_ITEMS = 100;
 
-    private AtomicInteger readerSource = new AtomicInteger();
-    private Set<String> writerTarget = new ConcurrentSkipListSet<>();
-    private Semaphore allItemsWrittenSemaphore = new Semaphore(-MAX_ITEMS + 1);
+    private static Set<String> propertyValues = new ConcurrentSkipListSet<>();
 
     @LocalServerPort
     private int port;
-
     @Autowired
     private TestRestTemplate restTemplate;
-
     @Autowired
-    private AdHocScheduler scheduler;
+    private AdHocScheduler adHocScheduler;
+    @Autowired
+    private JobBuilder jobBuilder;
 
-    private static AtomicBoolean firstExecution = new AtomicBoolean();
+    private JobConfig jobConfig = JobConfig.builder().name(JOB_NAME).asynchronous(false).build();
+    private CountDownLatch jobExecutedOnce = new CountDownLatch(1);
+    private AtomicBoolean firstExecution = new AtomicBoolean(true);
 
     @Before
-    public void setUp() throws DuplicateJobException, InterruptedException {
-        if (firstExecution.compareAndSet(false, true)) {
-            scheduler.schedule(
-                    JOB_NAME,
-                    scheduler.jobs().get(JOB_NAME)
-                            .incrementer(new RunIdIncrementer()) // adds unique parameter on each run so that job can be rerun
-                            .flow(scheduler.steps().get("step")
-                                    .<Integer, String>chunk(30)
-                                    .reader(() -> {
-                                        int i = readerSource.incrementAndGet();
-                                        if (i % 10 == 0)
-                                            logger.info("Read {} item(s) so far", i);
-                                        return i <= MAX_ITEMS ? i : null;
-                                    })
-                                    .processor((ItemProcessor<Integer, String>) (i1) -> i1.toString())
-                                    .writer(items -> {
-                                        writerTarget.addAll(items);
-                                        logger.info("Wrote {} item(s) so far", writerTarget.size());
-                                        allItemsWrittenSemaphore.release(items.size());
-                                    })
-                                    .allowStartIfComplete(true)
-                                    .build()).end().build(),
-                    CRON_EXPRESSION);
-            scheduler.start();
-
-            allItemsWrittenSemaphore.tryAcquire(1, 3, SECONDS);
-            assertThat(writerTarget).hasSize(MAX_ITEMS);
+    public void setUp() throws InterruptedException {
+        if (firstExecution.compareAndSet(true, false)) {
+            Job job = jobBuilder.createJob(JOB_NAME, () -> {
+                String propertyValue = JobProperties.of(JOB_NAME).getProperty(PROPERTY_NAME);
+                propertyValues.add(propertyValue);
+                jobExecutedOnce.countDown();
+            });
+            adHocScheduler.schedule(JOB_NAME, job, CRON_EXPRESSION);
+            adHocScheduler.start();
+            jobExecutedOnce.await(2, SECONDS);
+            adHocScheduler.pause();
         }
     }
 
     @Test
     public void jobExecution() {
-        assertThat(this.restTemplate.getForObject(url("/jobExecution?exitStatus=COMPLETED"), String.class))
+        assertThat(restTemplate.getForObject(url("/jobExecutions?exitStatus=COMPLETED"), String.class))
                 .contains("\"status\":\"COMPLETED\"").contains("\"id\":0,\"jobId\":0");
-        assertThat(this.restTemplate.getForObject(url("/jobExecution?exitStatus=FAILED"), String.class))
-                .contains("jobExecution?exitStatus=exitCode%3DFAILED");
+        assertThat(restTemplate.getForObject(url("/jobExecutions?exitStatus=FAILED"), String.class))
+                .contains("jobExecutions?exitStatus=exitCode%3DFAILED");
     }
 
     @Test
-    public void jobDetail() {
-        assertThat(this.restTemplate.getForObject(url("/jobDetail"), String.class))
-                .contains(CRON_EXPRESSION);
-        assertThat(this.restTemplate.getForObject(url("/jobDetail?enabled=false"), String.class))
-                .doesNotContain(CRON_EXPRESSION);
-        assertThat(this.restTemplate.getForObject(url("/jobDetail?springBatchJobName=" + JOB_NAME), String.class))
-                .contains(CRON_EXPRESSION).contains(JOB_NAME);
+    public void jobsCanBeStartedWithDifferentProperties() {
+        assertThat(propertyValues).containsExactly("0");
+
+        JobExecution je1 = startJob("1");
+        assertThat(propertyValues).containsExactly("0", "1");
+
+        JobExecution je2 = startJob("2");
+        assertThat(propertyValues).containsExactly("0", "1", "2");
+
+        assertThat(je1.getExitStatus()).isEqualTo(COMPLETED);
+        assertThat(je2.getExitStatus()).isEqualTo(COMPLETED);
+    }
+
+    private JobExecution startJob(String propertyValue) {
+        ResponseEntity<JobExecutionResource> responseEntity = restTemplate.postForEntity(url("/jobExecutions"),
+                jobConfig.toBuilder().property(PROPERTY_NAME, propertyValue).build(),
+                JobExecutionResource.class);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        return responseEntity.getBody().getJobExecution();
+    }
+
+    @Test
+    public void jobDetails() {
+        assertThat(restTemplate.getForObject(url("/jobDetails?springBatchJobName=" + JOB_NAME), String.class))
+                .contains(JOB_NAME);
     }
 
     @Test
     public void swagger() {
-        assertThat(this.restTemplate.getForObject(url("v2/api-docs"), String.class))
+        assertThat(restTemplate.getForObject(url("v2/api-docs"), String.class))
                 .contains("{\"swagger\":\"2.0\"");
     }
 

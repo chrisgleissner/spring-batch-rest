@@ -1,5 +1,6 @@
 package com.github.chrisgleissner.springbatchrest.api.job;
 
+import com.github.chrisgleissner.springbatchrest.util.adhoc.AdHocStarter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,6 +8,7 @@ import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -20,8 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static com.github.chrisgleissner.springbatchrest.api.MockSetup.configureMock;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest
 public class JobControllerTest {
 
     @Autowired
@@ -30,14 +31,17 @@ public class JobControllerTest {
     @MockBean
     private JobExplorer jobExplorer;
 
+    @MockBean
+    private AdHocStarter adHocStarter;
+
     @Before
-    public void setUp() throws NoSuchJobException {
+    public void setUp() {
         configureMock(jobExplorer);
     }
 
     @Test
     public void jobs() throws Exception {
-        mockMvc.perform(get("/job"))
+        mockMvc.perform(get("/jobs"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(2)));

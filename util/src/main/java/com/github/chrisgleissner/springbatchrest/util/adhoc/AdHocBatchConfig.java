@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor;
 
 import javax.sql.DataSource;
@@ -26,6 +27,7 @@ import static com.github.chrisgleissner.springbatchrest.util.adhoc.QuartzJobLaun
 @Configuration
 @ComponentScan
 @EnableBatchProcessing
+@EnableAspectJAutoProxy
 public class AdHocBatchConfig extends DefaultBatchConfigurer {
 
     @Autowired
@@ -53,11 +55,10 @@ public class AdHocBatchConfig extends DefaultBatchConfigurer {
         return scheduler;
     }
 
-    protected JobLauncher createJobLauncher() throws Exception {
+    public JobLauncher getJobLauncher() {
         SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
         jobLauncher.setJobRepository(jobRepository);
         jobLauncher.setTaskExecutor(new ConcurrentTaskExecutor(executorService));
-        jobLauncher.afterPropertiesSet();
         return jobLauncher;
     }
 }

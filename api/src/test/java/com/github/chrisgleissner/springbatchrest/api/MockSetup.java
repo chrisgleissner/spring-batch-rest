@@ -1,17 +1,16 @@
 package com.github.chrisgleissner.springbatchrest.api;
 
-import org.springframework.batch.core.BatchStatus;
-import org.springframework.batch.core.ExitStatus;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobInstance;
+import com.github.chrisgleissner.springbatchrest.util.adhoc.AdHocStarter;
+import org.springframework.batch.core.*;
+import org.springframework.batch.core.configuration.JobLocator;
 import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.job.SimpleJob;
 import org.springframework.batch.core.launch.NoSuchJobException;
 
 import java.util.Date;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.springframework.batch.core.ExitStatus.COMPLETED;
@@ -28,6 +27,11 @@ public class MockSetup {
     public static void configureMock(JobExplorer jobExplorer) {
         reset(jobExplorer);
         when(jobExplorer.getJobNames()).thenReturn(newArrayList("j1", "j2"));
+    }
+
+    public static void configureMock(AdHocStarter adHocStarter) {
+        reset(adHocStarter);
+        when(adHocStarter.start(any())).thenReturn(jobExecution(j11, 1, ExitStatus.EXECUTING));
     }
 
     public static void configureMockForJobExecutionsService(JobExplorer jobExplorer) throws NoSuchJobException {

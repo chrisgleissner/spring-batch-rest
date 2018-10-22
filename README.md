@@ -63,7 +63,7 @@ Job job = jobBuilder.createJob("jobName", () -> System.out.println("Running job"
 
 [AdHocScheduler](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/AdHocScheduler.java)
 
-Ad-hoc scheduler to register and trigger a job using a Quartz CRON trigger. The registration can be performed at 
+Ad-hoc scheduler to register and trigger a job using a Quartz CRON trigger. This can be performed at 
 run-time rather than Spring wiring time. This allows for simplified set-up of a large number of jobs that only 
 differ slightly:
 

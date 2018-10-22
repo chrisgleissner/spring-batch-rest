@@ -53,10 +53,19 @@ int i = JobPropertyResolvers.JobProperties.of("jobName").getProperty("intPropNam
 
 This project also contains utilities for starting or scheduling Spring Batch jobs ad-hoc, with minimal use of Spring.
 
+[JobBuilder](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/JobBuilder.java)
+
+Build a simple job based on a <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Runnable.html">Runnable</a>:
+
+```java
+Job job = jobBuilder.createJob("jobName", () -> System.out.println("Running job"));
+```
+
 [AdHocScheduler](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/AdHocScheduler.java)
 
-Ad-hoc scheduler to register and trigger Spring Batch jobs using Quartz CRON triggers at run-time rather than Spring
-wiring time. This allows for simplified set-up of a large number of jobs that only differ slightly:
+Ad-hoc scheduler to register and trigger a job using a Quartz CRON trigger. The registration can be performed at 
+run-time rather than Spring wiring time. This allows for simplified set-up of a large number of jobs that only 
+differ slightly:
 
 ```java
 adHocScheduler.schedule("jobName", job, "0/30 * * * * ?");
@@ -64,19 +73,10 @@ adHocScheduler.schedule("jobName", job, "0/30 * * * * ?");
 
 [AdHocStarter](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/AdHocStarter.java)
 
-Ad-hoc starter to immediately launch jobs:
+Similar to AdHocScheduler, but for immediately starting a job:
 
 ```java
 adHocStarter.start("jobName", job);
-
-```
-
-[JobBuilder](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/JobBuilder.java)
-
-Build a simple job based on a <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Runnable.html">Runnable</a>:
-
-```java
-jobBuilder.createJob("jobName", () -> System.out.println("Running job"));
 
 ```
 

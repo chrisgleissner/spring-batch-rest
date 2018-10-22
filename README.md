@@ -1,7 +1,7 @@
 # spring-batch-rest
 
 [![Build Status](https://travis-ci.org/chrisgleissner/spring-batch-rest.svg?branch=master)](https://travis-ci.org/chrisgleissner/spring-batch-rest)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.chrisgleissner/spring-batch-rest/badge.svg)](https://search.maven.org/artifact/com.github.chrisgleissner/spring-batch-rest)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.chrisgleissner/spring-batch-rest-api/badge.svg)](https://search.maven.org/artifact/com.github.chrisgleissner/spring-batch-rest-api)
 [![Coverage Status](https://coveralls.io/repos/github/chrisgleissner/spring-batch-rest/badge.svg?branch=master)](https://coveralls.io/github/chrisgleissner/spring-batch-rest?branch=master)
 
 REST API for Spring Batch, based on Spring MVC and Spring Boot.

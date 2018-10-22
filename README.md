@@ -20,7 +20,7 @@ Add a dependency to your pom.xml:
 ```xml
 <dependency>
     <groupId>com.github.chrisgleissner</groupId>
-    <artifactId>spring-batch-rest</artifactId>
+    <artifactId>spring-batch-rest-api</artifactId>
     <version>1.0.0</version>
 </dependency>
 ```

@@ -30,7 +30,8 @@ Add the following to the root configuration class which drives your Spring wirin
 ```java
 @EnableBatchProcessing
 @EnableSwagger2
-@ComponentScan(basePackageClasses= {AdHocStarter.class, JobController.class, JobDetailController.class, JobExecutionController.class })
+@ComponentScan(basePackageClasses= {AdHocStarter.class, JobController.class, 
+    JobDetailController.class, JobExecutionController.class })
 ```
 
 ### REST Endpoints
@@ -44,8 +45,8 @@ property resolution to the Spring <a href="https://docs.spring.io/spring-framewo
 
 Example:
 ```java
-String myProperty = JobPropertyResolvers.JobProperties.of("myJobName").getProperty("myPropertyName");
-int myIntProperty = JobPropertyResolvers.JobProperties.of("myJobName").getProperty("myIntPropertyName", Integer.class, 2);
+String s = JobPropertyResolvers.JobProperties.of("jobName").getProperty("propName");
+int i = JobPropertyResolvers.JobProperties.of("jobName").getProperty("intPropName", Integer.class, 2);
 ```
 
 ### Utilities

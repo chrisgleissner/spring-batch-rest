@@ -1,4 +1,4 @@
-package com.github.chrisgleissner.springbatchrest.test;
+package com.github.chrisgleissner.springbatchrest.example;
 
 import com.github.chrisgleissner.springbatchrest.util.adhoc.AdHocScheduler;
 import lombok.AllArgsConstructor;
@@ -101,7 +101,8 @@ public class PersonJobConfig {
 
     @StepScope
     @Bean
-    ItemProcessor personNameCaseChange(@Value("#{jobParameters['upperCase']}") boolean upperCase) {
+    ItemProcessor personNameCaseChange(@Value("#{jobParameters['upperCase']}") Boolean upperCaseParam) {
+        boolean upperCase = upperCaseParam == null ? false : upperCaseParam;
         log.info("personNameCaseChange(upperCase={})", upperCase);
         return new FunctionItemProcessor<Person, Person>(p -> new Person(
                 upperCase ? p.firstName.toUpperCase() : p.firstName.toLowerCase(),

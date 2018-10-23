@@ -24,13 +24,13 @@ Add a dependency to your pom.xml:
 </dependency>
 ```
 
-Add `@EnableSpringBatchRest` to your Spring Boot application class, for example:
+Add `@EnableSpringBatchRest` to your Spring Boot application class, for <a href="https://github.com/chrisgleissner/spring-batch-rest/blob/master/test/src/main/java/com/github/chrisgleissner/springbatchrest/example/SpringBatchRestSampleApplication.java">example</a>:
 ```java
 @SpringBootApplication
 @EnableSpringBatchRest
-public class SpringBatchRestTestApplication {
+public class SpringBatchRestSampleApplication {
     public static void main(String[] args) {
-        SpringApplication.run(SpringBatchRestTestApplication.class, args);
+        SpringApplication.run(SpringBatchRestSampleApplication.class, args);
     }
 }
 ```
@@ -67,7 +67,7 @@ Full Swagger API docs can be found at
 <a href="http://localhost:8080/swagger-ui.html">http://localhost:8080/swagger-ui.html</a> after running:
 ```text
 mvn clean install
-java -jar target/spring-batch-rest-test*.jar
+java -jar example/target/spring-batch-rest-example*.jar
 ```
 
 

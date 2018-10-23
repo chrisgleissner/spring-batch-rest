@@ -35,6 +35,16 @@ public class SpringBatchRestSampleApplication {
 }
 ```
 
+To see an example Spring Boot app, run
+```text
+mvn clean install
+java -jar example/target/spring-batch-rest-example*.jar
+```
+
+and check the full Swagger REST API docs at 
+<a href="http://localhost:8080/swagger-ui.html">http://localhost:8080/swagger-ui.html</a>. 
+
+
 ## REST Endpoints
 
 The following REST endpoints are available:
@@ -60,15 +70,6 @@ The following REST endpoints are available:
 |--------------|------------------------|--------------|
 | GET          | /jobDetails            | All Quartz schedules   |
 | GET          | /jobsDetails/{quartzGroupName}/{quartzJobName}  | Single Quartz schedule |
-
-#### Swagger Docs
-
-Full Swagger API docs can be found at 
-<a href="http://localhost:8080/swagger-ui.html">http://localhost:8080/swagger-ui.html</a> after running:
-```text
-mvn clean install
-java -jar example/target/spring-batch-rest-example*.jar
-```
 
 
 ## Job Property Overrides

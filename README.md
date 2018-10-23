@@ -13,7 +13,7 @@ either be obtained via a custom API or via standard Spring Batch job parameters,
 
 ### Getting Started
 
-To integrate the REST API in your Spring Boot project, do the following:
+To integrate the REST API in your Spring Boot project do the following:
 
 Add a dependency to your pom.xml:
 ```xml
@@ -29,7 +29,6 @@ Add `@EnableSpringBatchRest` to your Spring Boot application class, for example:
 @SpringBootApplication
 @EnableSpringBatchRest
 public class SpringBatchRestTestApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(SpringBatchRestTestApplication.class, args);
     }
@@ -64,11 +63,8 @@ The following REST endpoints are available:
 
 #### Swagger Docs
 
-The full Swagger API documentation can be accessed at 
-<a href="http://localhost:8080/swagger-ui.html">http://localhost:8080/swagger-ui.html</a> after
-running the following from the project's root:
-
-
+Full Swagger API docs can be found at 
+<a href="http://localhost:8080/swagger-ui.html">http://localhost:8080/swagger-ui.html</a> after running:
 ```text
 mvn clean install
 java -jar target/spring-batch-rest-test*.jar
@@ -77,13 +73,15 @@ java -jar target/spring-batch-rest-test*.jar
 
 ### Specifying Job Properties via REST
 
-Job properties which are specified when triggering a job via REST can be accessed via a custom API. This API delegates the actual
-property resolution to the Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/core/env/PropertyResolver.html">PropertyResolver<a>.
-
-Example:
+Properties can be resolved as follows to benefit from passing in properties via REST when starting a job:
 ```java
-String s = JobPropertyResolvers.JobProperties.of("jobName").getProperty("propName");
-int i = JobPropertyResolvers.JobProperties.of("jobName").getProperty("intPropName", Integer.class, 2);
+String prop = JobPropertyResolvers.JobProperties.of("jobName").getProperty("propName");
+```
+
+Alternatively you can resolve the properties from the job parameters:
+```java
+@Bean @StepScope
+ItemWriter<Object> writer(@Value("#{jobParameters['propName']}") String prop) { ... }
 ```
 
 ### Utilities

@@ -6,12 +6,12 @@
 
 REST API for Spring Batch, based on Spring MVC and Spring Boot.
 
-### Features
+## Features
 - Get information on jobs, job executions, and Quartz schedules
 - Start job execution (synchronous or asynchronous) with optional job property overrides. The job properties can
 either be obtained via a custom API or via standard Spring Batch job parameters, accessible from <a href="https://docs.spring.io/spring-batch/trunk/apidocs/org/springframework/batch/core/scope/StepScope.html">step-scoped beans</a>.
 
-### Getting Started
+## Getting Started
 
 To integrate the REST API in your Spring Boot project do the following:
 
@@ -35,7 +35,7 @@ public class SpringBatchRestTestApplication {
 }
 ```
 
-### REST Endpoints
+## REST Endpoints
 
 The following REST endpoints are available:
 
@@ -71,7 +71,7 @@ java -jar target/spring-batch-rest-test*.jar
 ```
 
 
-### Specifying Job Properties via REST
+## Job Property Overrides
 
 Properties can be overridden when starting a job via REST. These overrides can then be accessed from within a job:
 ```java
@@ -98,7 +98,7 @@ ItemWriter<Object> writer(@Value("#{jobParameters['propName']}") String prop) {
 
 If a property is not overridden, it is resolved against the Spring environment. All overrides are reverted on job completion.
 
-### Utilities
+## Utilities
 
 This project also contains utilities for starting or scheduling Spring Batch jobs ad-hoc, with minimal use of Spring.
 

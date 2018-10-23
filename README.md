@@ -13,9 +13,7 @@ either be obtained via a custom API or via standard Spring Batch job parameters,
 
 ## Getting Started
 
-To integrate the REST API in your Spring Boot project do the following:
-
-Add a dependency to your pom.xml:
+To integrate the REST API in your Spring Boot project, first add this dependency to your pom.xml:
 ```xml
 <dependency>
     <groupId>com.github.chrisgleissner</groupId>
@@ -24,7 +22,7 @@ Add a dependency to your pom.xml:
 </dependency>
 ```
 
-Add `@EnableSpringBatchRest` to your Spring Boot application class, for <a href="https://github.com/chrisgleissner/spring-batch-rest/blob/master/test/src/main/java/com/github/chrisgleissner/springbatchrest/example/SpringBatchRestSampleApplication.java">example</a>:
+Then add `@EnableSpringBatchRest` to your Spring Boot application class, for <a href="https://github.com/chrisgleissner/spring-batch-rest/blob/master/test/src/main/java/com/github/chrisgleissner/springbatchrest/example/SpringBatchRestSampleApplication.java">example</a>:
 ```java
 @SpringBootApplication
 @EnableSpringBatchRest
@@ -35,13 +33,12 @@ public class SpringBatchRestSampleApplication {
 }
 ```
 
-To see an example Spring Boot app, run
+To see the sample app above in action, run
 ```text
 mvn clean install
 java -jar example/target/spring-batch-rest-example*.jar
 ```
-
-and check the full Swagger REST API docs at 
+and then check the Swagger REST API docs at 
 <a href="http://localhost:8080/swagger-ui.html">http://localhost:8080/swagger-ui.html</a>. 
 
 

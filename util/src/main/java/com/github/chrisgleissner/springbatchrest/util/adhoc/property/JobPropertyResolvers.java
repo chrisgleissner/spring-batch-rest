@@ -1,7 +1,6 @@
 package com.github.chrisgleissner.springbatchrest.util.adhoc.property;
 
 import com.github.chrisgleissner.springbatchrest.util.adhoc.JobConfig;
-import com.github.chrisgleissner.springbatchrest.util.adhoc.observer.JobExecutionAspect;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;

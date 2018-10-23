@@ -2,9 +2,6 @@ package com.github.chrisgleissner.springbatchrest.api.jobexecution;
 
 import com.github.chrisgleissner.springbatchrest.util.adhoc.AdHocStarter;
 import com.github.chrisgleissner.springbatchrest.util.adhoc.JobConfig;
-import com.github.chrisgleissner.springbatchrest.util.adhoc.observer.JobExecutionAspect;
-import com.github.chrisgleissner.springbatchrest.util.adhoc.property.JobPropertyResolver;
-import com.github.chrisgleissner.springbatchrest.util.adhoc.property.JobPropertyResolvers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,12 +9,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
-import org.springframework.batch.core.configuration.JobLocator;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.NoSuchJobException;
-import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.core.env.Environment;
-import org.springframework.mock.env.MockEnvironment;
 
 import java.util.Collection;
 import java.util.Optional;

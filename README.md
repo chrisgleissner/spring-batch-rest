@@ -13,10 +13,9 @@ either be obtained via a custom API or via standard Spring Batch job parameters,
 
 ### Getting Started
 
-To integrate the REST API in your Spring Batch project, do the following:
+To integrate the REST API in your Spring Boot project, do the following:
 
 Add a dependency to your pom.xml:
-
 ```xml
 <dependency>
     <groupId>com.github.chrisgleissner</groupId>
@@ -25,18 +24,56 @@ Add a dependency to your pom.xml:
 </dependency>
 ```
 
-Add the following to the root configuration class which drives your Spring wiring:
-
+Add `@EnableSpringBatchRest` to your Spring Boot application class, for example:
 ```java
-@EnableBatchProcessing
-@EnableSwagger2
-@ComponentScan(basePackageClasses= {AdHocStarter.class, JobController.class, 
-    JobDetailController.class, JobExecutionController.class })
+@SpringBootApplication
+@EnableSpringBatchRest
+public class SpringBatchRestTestApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(SpringBatchRestTestApplication.class, args);
+    }
+}
 ```
 
 ### REST Endpoints
 
-Documentation for all REST endpoints can be found at http://localhost:8080/swagger-ui.html after starting your application.
+The following REST endpoints are available:
+
+#### Jobs
+
+| HTTP Method  | Path                   | Description  |
+|--------------|------------------------|--------------|
+| GET          | /jobs                  | All jobs  |
+| GET          | /jobs/{jobName}        | Single job  |
+
+#### Job Executions
+
+| HTTP Method  | Path                   | Description  |
+|--------------|------------------------|--------------|
+| GET          | /jobExecutions         | All job executions |
+| GET          | /jobExecutions/{id}    | Single job execution |
+| POST         | /jobExecutions         | Start job execution |
+
+#### Quartz Schedules
+
+| HTTP Method  | Path                   | Description  |
+|--------------|------------------------|--------------|
+| GET          | /jobDetails            | All Quartz schedules   |
+| GET          | /jobsDetails/{quartzGroupName}/{quartzJobName}  | Single Quartz schedule |
+
+#### Swagger Docs
+
+The full Swagger API documentation can be accessed at 
+<a href="http://localhost:8080/swagger-ui.html">http://localhost:8080/swagger-ui.html</a> after
+running the following from the project's root:
+
+
+```text
+mvn clean install
+java -jar target/spring-batch-rest-test*.jar
+```
+
 
 ### Specifying Job Properties via REST
 

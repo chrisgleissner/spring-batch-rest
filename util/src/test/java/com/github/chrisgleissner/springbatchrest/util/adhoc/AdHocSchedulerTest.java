@@ -12,9 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import com.github.chrisgleissner.springbatchrest.util.CacheItemWriter;
-import com.github.chrisgleissner.springbatchrest.util.JobCompletionNotificationListener;
-import com.github.chrisgleissner.springbatchrest.util.Person;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -47,7 +44,7 @@ public class AdHocSchedulerTest {
     private CacheItemWriter<Person> writer = new CacheItemWriter();
 
     @Test
-    public void scheduleWorks() throws InterruptedException, DuplicateJobException {
+    public void scheduleWorks() throws InterruptedException {
         scheduler.schedule(JOB_NAME_1, csvImportJobSupplier(JOB_NAME_1, CSV1_FILENAME), CRON_SCHEDULE_TO_TRIGGER_EVERY_SECOND);
         scheduler.schedule(JOB_NAME_2, csvImportJobSupplier(JOB_NAME_2, CSV2_FILENAME), CRON_SCHEDULE_TO_TRIGGER_EVERY_SECOND);
         scheduler.start();

@@ -1,5 +1,6 @@
 package com.github.chrisgleissner.springbatchrest.util.adhoc;
 
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
@@ -12,13 +13,12 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+@Slf4j
 public class QuartzJobLauncher extends QuartzJobBean {
 
     public static final String JOB_NAME = "jobName";
     public static final String JOB_LOCATOR = "jobLocator";
     public static final String JOB_LAUNCHER = "jobLauncher";
-
-    private static final Logger logger = getLogger(QuartzJobLauncher.class);
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
@@ -31,11 +31,11 @@ public class QuartzJobLauncher extends QuartzJobBean {
             JobLauncher jobLauncher = (JobLauncher) context.getScheduler().getContext().get(JOB_LAUNCHER);
 
             Job job = jobLocator.getJob(jobName);
-            logger.info("Starting {}", job.getName());
+            log.info("Starting {}", job.getName());
             JobExecution jobExecution = jobLauncher.run(job, new JobParameters());
-            logger.info("{}_{} was completed successfully", job.getName(), jobExecution.getId());
+            log.info("{}_{} was completed successfully", job.getName(), jobExecution.getId());
         } catch (Exception e) {
-            logger.error("Job {} failed", jobName, e);
+            log.error("Job {} failed", jobName, e);
         }
     }
 }

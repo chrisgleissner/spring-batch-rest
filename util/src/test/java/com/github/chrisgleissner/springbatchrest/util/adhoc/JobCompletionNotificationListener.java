@@ -1,4 +1,4 @@
-package com.github.chrisgleissner.springbatchrest.util;
+package com.github.chrisgleissner.springbatchrest.util.adhoc;
 
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;

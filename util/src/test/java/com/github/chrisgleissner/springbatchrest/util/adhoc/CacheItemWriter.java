@@ -1,4 +1,4 @@
-package com.github.chrisgleissner.springbatchrest.util;
+package com.github.chrisgleissner.springbatchrest.util.adhoc;
 
 import org.springframework.batch.item.ItemWriter;
 
@@ -12,7 +12,7 @@ public class CacheItemWriter<T> implements ItemWriter<T> {
     private List<T> items = synchronizedList(new LinkedList<>());
 
     @Override
-    public void write(List<? extends T> items) throws Exception {
+    public void write(List<? extends T> items) {
         this.items.addAll(items);
     }
 

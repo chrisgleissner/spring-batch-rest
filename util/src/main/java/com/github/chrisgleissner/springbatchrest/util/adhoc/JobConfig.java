@@ -10,6 +10,7 @@ import java.util.Map;
 @Data
 @Builder(toBuilder = true)
 public class JobConfig {
+
     private String name;
     @Singular("property")
     private Map<String, String> properties = new HashMap<>();

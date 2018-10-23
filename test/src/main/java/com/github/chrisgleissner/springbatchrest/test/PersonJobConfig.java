@@ -9,6 +9,7 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
@@ -18,11 +19,12 @@ import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.function.FunctionItemProcessor;
 import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
-import javax.annotation.PostConstruct;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,8 +36,8 @@ import static java.util.Collections.synchronizedList;
 @Configuration
 public class PersonJobConfig {
 
-    public static final String JOB_NAME = "personJob";
-    public static final String LAST_NAME_PREFIX = "lastNamePrefix";
+    static final String JOB_NAME = "personJob";
+    static final String LAST_NAME_PREFIX = "lastNamePrefix";
 
     @Autowired
     JobBuilderFactory jobBuilderFactory;
@@ -47,21 +49,23 @@ public class PersonJobConfig {
     private AdHocScheduler adHocScheduler;
 
     @Bean
-    Job personJob() {
-        return jobBuilderFactory.get(JOB_NAME)
+    Job personJob(@Qualifier("personStep") Step personStep) {
+        Job job = jobBuilderFactory.get(JOB_NAME)
                 .incrementer(new RunIdIncrementer())
-                .flow(personStep())
+                .flow(personStep)
                 .end()
                 .build();
+        adHocScheduler.schedule(PersonJobConfig.JOB_NAME, job, "0 0 12 * * ?");
+        return job;
     }
 
     @Bean
-    Step personStep() {
+    Step personStep(@Qualifier("personProcessor") ItemProcessor personProcessor) {
         return stepBuilderFactory.get("personStep")
                 .allowStartIfComplete(true)
-                .<Person, Person> chunk(3)
+                .<Person, Person>chunk(3)
                 .reader(personReader())
-                .processor(personProcessor())
+                .processor(personProcessor)
                 .writer(personWriter())
                 .build();
     }
@@ -80,9 +84,9 @@ public class PersonJobConfig {
     }
 
     @Bean
-    ItemProcessor personProcessor() {
+    ItemProcessor personProcessor(@Qualifier("personNameCaseChange") ItemProcessor personNameCaseChange) {
         CompositeItemProcessor p = new CompositeItemProcessor();
-        p.setDelegates(newArrayList(personNameFilter(), personNameToUpperCase()));
+        p.setDelegates(newArrayList(personNameFilter(), personNameCaseChange));
         return p;
     }
 
@@ -95,17 +99,21 @@ public class PersonJobConfig {
         });
     }
 
+    @StepScope
     @Bean
-    ItemProcessor personNameToUpperCase() {
-        return new FunctionItemProcessor<Person, Person>(p -> new Person(p.firstName.toUpperCase(), p.lastName.toUpperCase()));
+    ItemProcessor personNameCaseChange(@Value("#{jobParameters['upperCase']}") boolean upperCase) {
+        log.info("personNameCaseChange(upperCase={})", upperCase);
+        return new FunctionItemProcessor<Person, Person>(p -> new Person(
+                upperCase ? p.firstName.toUpperCase() : p.firstName.toLowerCase(),
+                upperCase ? p.lastName.toUpperCase() : p.lastName.toLowerCase()));
     }
 
     @Bean
     CacheItemWriter<Person> personWriter() {
-        return new CacheItemWriter();
+        return new CacheItemWriter<>();
     }
 
-    public static class CacheItemWriter<T> implements ItemWriter<T> {
+    public class CacheItemWriter<T> implements ItemWriter<T> {
         private List<T> items = synchronizedList(new LinkedList<>());
 
         @Override
@@ -121,12 +129,6 @@ public class PersonJobConfig {
             items.clear();
         }
     }
-
-    @PostConstruct
-    public void schedule() {
-        adHocScheduler.schedule(PersonJobConfig.JOB_NAME, personJob(), "0 0 12 * * ?");
-    }
-
 
     @Data
     @NoArgsConstructor

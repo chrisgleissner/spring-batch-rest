@@ -2,6 +2,8 @@ package com.github.chrisgleissner.springbatchrest.test;
 
 import com.github.chrisgleissner.springbatchrest.api.jobexecution.JobExecution;
 import com.github.chrisgleissner.springbatchrest.api.jobexecution.JobExecutionResource;
+import com.github.chrisgleissner.springbatchrest.test.PersonJobConfig.CacheItemWriter;
+import com.github.chrisgleissner.springbatchrest.test.PersonJobConfig.Person;
 import com.github.chrisgleissner.springbatchrest.util.adhoc.JobConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +32,7 @@ public class PersonJobTest {
     private TestRestTemplate restTemplate;
 
     @Autowired
-    private PersonJobConfig.CacheItemWriter cacheItemWriter;
+    private CacheItemWriter<Person> cacheItemWriter;
 
     @Autowired
     private JobRegistry jobRegistry;
@@ -41,19 +43,22 @@ public class PersonJobTest {
         assertThat(job).isNotNull();
 
         cacheItemWriter.clear();
-        startJob("D");
+        startJob("D", true);
         assertThat(cacheItemWriter.getItems()).hasSize(2);
+        cacheItemWriter.getItems().forEach(p -> assertThat(p.getFirstName()).isEqualTo(p.getFirstName().toUpperCase()));
 
         cacheItemWriter.clear();
-        startJob("To");
+        startJob("To", false);
         assertThat(cacheItemWriter.getItems()).hasSize(3);
+        cacheItemWriter.getItems().forEach(p -> assertThat(p.getFirstName()).isEqualTo(p.getFirstName().toLowerCase()));
     }
 
-    private JobExecution startJob(String lastNamePrefix) {
+    private JobExecution startJob(String lastNamePrefix, boolean upperCase) {
         ResponseEntity<JobExecutionResource> responseEntity = restTemplate.postForEntity("http://localhost:" + port + "/jobExecutions",
                 JobConfig.builder()
                         .name(PersonJobConfig.JOB_NAME)
                         .property(PersonJobConfig.LAST_NAME_PREFIX, lastNamePrefix)
+                        .property("upperCase", "" + upperCase)
                         .asynchronous(false).build(),
                 JobExecutionResource.class);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);

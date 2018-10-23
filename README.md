@@ -73,16 +73,30 @@ java -jar target/spring-batch-rest-test*.jar
 
 ### Specifying Job Properties via REST
 
-Properties can be resolved as follows to benefit from passing in properties via REST when starting a job:
+Properties can be overridden when starting a job via REST. These overrides can then be accessed from within a job:
 ```java
-String prop = JobPropertyResolvers.JobProperties.of("jobName").getProperty("propName");
+@Bean
+ItemWriter<Object> writer() {
+    return new ItemWriter<Object>() {
+        @Override
+        public void write(List<?> items) throws Exception {
+           String prop = JobPropertyResolvers.JobProperties.of("jobName").getProperty("propName");
+           // ...
+        }
+    }
+}
 ```
 
-Alternatively you can resolve the properties from the job parameters:
+An alternative approach is to use job parameters on `@StepScope`-annotated beans:
 ```java
-@Bean @StepScope
-ItemWriter<Object> writer(@Value("#{jobParameters['propName']}") String prop) { ... }
+@StepScope
+@Bean 
+ItemWriter<Object> writer(@Value("#{jobParameters['propName']}") String prop) {
+    // ... 
+}
 ```
+
+If a property is not overridden, it is resolved against the Spring environment. All overrides are reverted on job completion.
 
 ### Utilities
 

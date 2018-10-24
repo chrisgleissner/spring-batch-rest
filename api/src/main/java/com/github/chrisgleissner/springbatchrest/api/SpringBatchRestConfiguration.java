@@ -1,4 +1,4 @@
-package com.github.chrisgleissner.springbatchrest.api.configuration;
+package com.github.chrisgleissner.springbatchrest.api;
 
 import com.github.chrisgleissner.springbatchrest.api.job.JobController;
 import com.github.chrisgleissner.springbatchrest.api.jobdetail.JobDetailController;

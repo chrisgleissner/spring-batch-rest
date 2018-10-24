@@ -1,6 +1,6 @@
 package com.github.chrisgleissner.springbatchrest.example;
 
-import com.github.chrisgleissner.springbatchrest.api.annotations.EnableSpringBatchRest;
+import com.github.chrisgleissner.springbatchrest.api.EnableSpringBatchRest;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

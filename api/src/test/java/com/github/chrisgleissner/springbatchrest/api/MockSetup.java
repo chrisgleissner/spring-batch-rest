@@ -1,13 +1,16 @@
 package com.github.chrisgleissner.springbatchrest.api;
 
 import com.github.chrisgleissner.springbatchrest.util.adhoc.AdHocStarter;
-import org.springframework.batch.core.*;
-import org.springframework.batch.core.configuration.JobLocator;
+import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.ExitStatus;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobInstance;
+import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.job.SimpleJob;
 import org.springframework.batch.core.launch.NoSuchJobException;
 
 import java.util.Date;
+import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.mockito.ArgumentMatchers.*;
@@ -18,6 +21,7 @@ import static org.springframework.batch.core.ExitStatus.FAILED;
 
 public class MockSetup {
 
+    private static final List<String> JOB_NAMES = newArrayList("j1", "j2");
     private static JobInstance j11 = new JobInstance(1L, "j1");
     private static JobInstance j12 = new JobInstance(2L, "j1");
     private static JobInstance j21 = new JobInstance(3L, "j2");
@@ -26,7 +30,12 @@ public class MockSetup {
 
     public static void configureMock(JobExplorer jobExplorer) {
         reset(jobExplorer);
-        when(jobExplorer.getJobNames()).thenReturn(newArrayList("j1", "j2"));
+        when(jobExplorer.getJobNames()).thenReturn(JOB_NAMES);
+    }
+
+    public static void configureMock(JobRegistry jobRegistry) {
+        reset(jobRegistry);
+        when(jobRegistry.getJobNames()).thenReturn(JOB_NAMES);
     }
 
     public static void configureMock(AdHocStarter adHocStarter) {

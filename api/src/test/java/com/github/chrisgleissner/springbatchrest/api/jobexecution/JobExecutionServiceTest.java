@@ -15,10 +15,10 @@ import org.springframework.batch.core.launch.NoSuchJobException;
 import java.util.Collection;
 import java.util.Optional;
 
-import static java.util.Optional.empty;
-import static org.assertj.core.api.Assertions.assertThat;
 import static com.github.chrisgleissner.springbatchrest.api.MockSetup.configureMock;
 import static com.github.chrisgleissner.springbatchrest.api.MockSetup.configureMockForJobExecutionsService;
+import static java.util.Optional.empty;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JobExecutionServiceTest {

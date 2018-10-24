@@ -1,25 +1,25 @@
 package com.github.chrisgleissner.springbatchrest.api.job;
 
-import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 @Service
 public class JobService {
 
-    private JobExplorer jobExplorer;
+    private JobRegistry jobRegistry;
 
     @Autowired
-    public JobService(JobExplorer jobExplorer) {
-        this.jobExplorer = jobExplorer;
+    public JobService(JobRegistry jobRegistry) {
+        this.jobRegistry = jobRegistry;
     }
 
     public Collection<Job> jobs() {
-        return jobExplorer.getJobNames().stream().map(n -> new Job(n)).collect(toList());
+        return jobRegistry.getJobNames().stream().map(n -> new Job(n)).collect(toSet());
     }
 
     public Job job(String jobName) {

@@ -1,6 +1,5 @@
-package com.github.chrisgleissner.springbatchrest.api.annotations;
+package com.github.chrisgleissner.springbatchrest.api;
 
-import com.github.chrisgleissner.springbatchrest.api.configuration.SpringBatchRestConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;

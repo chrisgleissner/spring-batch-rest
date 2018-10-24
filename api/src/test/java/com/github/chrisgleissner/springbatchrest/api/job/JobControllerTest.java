@@ -4,22 +4,19 @@ import com.github.chrisgleissner.springbatchrest.util.adhoc.AdHocStarter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.NoSuchJobException;
+import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static com.github.chrisgleissner.springbatchrest.api.MockSetup.configureMock;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static com.github.chrisgleissner.springbatchrest.api.MockSetup.configureMock;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest
@@ -29,14 +26,14 @@ public class JobControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private JobExplorer jobExplorer;
+    private JobRegistry jobRegistry;
 
     @MockBean
     private AdHocStarter adHocStarter;
 
     @Before
     public void setUp() {
-        configureMock(jobExplorer);
+        configureMock(jobRegistry);
     }
 
     @Test

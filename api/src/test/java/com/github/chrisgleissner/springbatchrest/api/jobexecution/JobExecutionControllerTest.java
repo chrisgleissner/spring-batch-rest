@@ -4,12 +4,11 @@ import com.github.chrisgleissner.springbatchrest.util.adhoc.AdHocStarter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -33,11 +32,15 @@ public class JobExecutionControllerTest {
     private JobExplorer jobExplorer;
 
     @MockBean
+    private JobRegistry jobRegistry;
+
+    @MockBean
     private AdHocStarter adHocStarter;
 
     @Before
     public void setUp() throws NoSuchJobException {
         configureMock(jobExplorer);
+        configureMock(jobRegistry);
         configureMockForJobExecutionsService(jobExplorer);
     }
 

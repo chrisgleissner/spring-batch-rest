@@ -97,7 +97,7 @@ If a property is not overridden, it is resolved against the Spring environment. 
 
 ## Utilities
 
-This project also contains utilities for starting or scheduling Spring Batch jobs ad-hoc, with minimal use of Spring.
+The util module contains code for registering, starting and scheduling jobs:
 
 [JobBuilder](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/JobBuilder.java)
 

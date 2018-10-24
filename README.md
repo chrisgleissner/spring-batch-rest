@@ -71,7 +71,7 @@ The following REST endpoints are available:
 
 ## Job Property Overrides
 
-Properties can be overridden when starting a job via REST. These overrides can then be accessed from within a job:
+Properties can be overridden when starting a job via REST. These overrides can then be accessed from a job either via:
 ```java
 @Bean
 ItemWriter<Object> writer() {
@@ -84,8 +84,7 @@ ItemWriter<Object> writer() {
     }
 }
 ```
-
-An alternative approach is to use job parameters on `@StepScope`-annotated beans:
+or alternatively by using `@StepScope`-annotated beans:
 ```java
 @StepScope
 @Bean 

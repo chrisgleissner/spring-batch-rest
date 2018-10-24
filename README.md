@@ -33,7 +33,7 @@ public class SpringBatchRestSampleApplication {
 }
 ```
 
-To see the sample app above in action, run
+To see this examnple in action, run
 ```text
 mvn clean install
 java -jar example/target/spring-batch-rest-example*.jar

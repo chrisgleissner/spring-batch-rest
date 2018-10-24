@@ -1,7 +1,7 @@
 # spring-batch-rest
 
 [![Build Status](https://travis-ci.org/chrisgleissner/spring-batch-rest.svg?branch=master)](https://travis-ci.org/chrisgleissner/spring-batch-rest)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.chrisgleissner/spring-batch-rest-api/badge.svg)](https://search.maven.org/artifact/com.github.chrisgleissner/spring-batch-rest-api)
+[![Maven Central](https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/com/github/chrisgleissner/spring-batch-rest-api/maven-metadata.xml.svg)](https://search.maven.org/artifact/com.github.chrisgleissner/spring-batch-rest-api)
 [![Coverage Status](https://coveralls.io/repos/github/chrisgleissner/spring-batch-rest/badge.svg?branch=master)](https://coveralls.io/github/chrisgleissner/spring-batch-rest?branch=master)
 
 REST API for Spring Batch, based on Spring MVC and Spring Boot.
@@ -18,11 +18,11 @@ To integrate the REST API in your Spring Boot project, first add this dependency
 <dependency>
     <groupId>com.github.chrisgleissner</groupId>
     <artifactId>spring-batch-rest-api</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
-Then add `@EnableSpringBatchRest` to your Spring Boot application class, for <a href="https://github.com/chrisgleissner/spring-batch-rest/blob/master/test/src/main/java/com/github/chrisgleissner/springbatchrest/example/SpringBatchRestSampleApplication.java">example</a>:
+Then add `@EnableSpringBatchRest` to your Spring Boot application class, for <a href="https://github.com/chrisgleissner/spring-batch-rest/blob/master/example/src/main/java/com/github/chrisgleissner/springbatchrest/example/SpringBatchRestSampleApplication.java">example</a>:
 ```java
 @SpringBootApplication
 @EnableSpringBatchRest
@@ -33,7 +33,7 @@ public class SpringBatchRestSampleApplication {
 }
 ```
 
-To see the sample app above in action, run
+To see this example in action, run
 ```text
 mvn clean install
 java -jar example/target/spring-batch-rest-example*.jar
@@ -71,7 +71,7 @@ The following REST endpoints are available:
 
 ## Job Property Overrides
 
-Properties can be overridden when starting a job via REST. These overrides can then be accessed from within a job:
+Properties can be overridden when starting a job via REST. These overrides can then be accessed from a job either via:
 ```java
 @Bean
 ItemWriter<Object> writer() {
@@ -84,8 +84,7 @@ ItemWriter<Object> writer() {
     }
 }
 ```
-
-An alternative approach is to use job parameters on `@StepScope`-annotated beans:
+or alternatively by using `@StepScope`-annotated beans:
 ```java
 @StepScope
 @Bean 
@@ -98,19 +97,15 @@ If a property is not overridden, it is resolved against the Spring environment. 
 
 ## Utilities
 
-This project also contains utilities for starting or scheduling Spring Batch jobs ad-hoc, with minimal use of Spring.
+The <a href="https://github.com/chrisgleissner/spring-batch-rest/tree/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util">util module</a> contains code for registering, starting and scheduling jobs:
 
-[JobBuilder](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/JobBuilder.java)
-
-Build a simple job based on a <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Runnable.html">Runnable</a>:
+[JobBuilder](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/JobBuilder.java) builds a simple job based on a <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Runnable.html">Runnable</a>:
 
 ```java
 Job job = jobBuilder.createJob("jobName", () -> System.out.println("Running job"));
 ```
 
-[AdHocScheduler](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/AdHocScheduler.java)
-
-Ad-hoc scheduler to register and trigger a job using a Quartz CRON trigger. This can be performed at 
+[AdHocScheduler](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/AdHocScheduler.java) registers and triggers a job using a Quartz CRON trigger. This can be performed at 
 run-time rather than Spring wiring time which allows for simplified set-up of a large number of jobs that only 
 differ slightly:
 
@@ -118,9 +113,7 @@ differ slightly:
 adHocScheduler.schedule("jobName", job, "0/30 * * * * ?");
 ```
 
-[AdHocStarter](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/AdHocStarter.java)
-
-Similar to AdHocScheduler, but for immediately starting a job:
+[AdHocStarter](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/AdHocStarter.java) is similar to AdHocScheduler, but used for immediately starting a job:
 
 ```java
 adHocStarter.start("jobName", job);

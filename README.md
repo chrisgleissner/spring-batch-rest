@@ -97,7 +97,7 @@ If a property is not overridden, it is resolved against the Spring environment. 
 
 ## Utilities
 
-The util module contains code for registering, starting and scheduling jobs:
+The <a href="https://github.com/chrisgleissner/spring-batch-rest/tree/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util">util module</a> contains code for registering, starting and scheduling jobs:
 
 [JobBuilder](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/JobBuilder.java)
 

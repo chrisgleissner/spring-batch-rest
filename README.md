@@ -99,17 +99,13 @@ If a property is not overridden, it is resolved against the Spring environment. 
 
 The <a href="https://github.com/chrisgleissner/spring-batch-rest/tree/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util">util module</a> contains code for registering, starting and scheduling jobs:
 
-[JobBuilder](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/JobBuilder.java)
-
-Build a simple job based on a <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Runnable.html">Runnable</a>:
+[JobBuilder](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/JobBuilder.java) builds a simple job based on a <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Runnable.html">Runnable</a>:
 
 ```java
 Job job = jobBuilder.createJob("jobName", () -> System.out.println("Running job"));
 ```
 
-[AdHocScheduler](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/AdHocScheduler.java)
-
-Ad-hoc scheduler to register and trigger a job using a Quartz CRON trigger. This can be performed at 
+[AdHocScheduler](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/AdHocScheduler.java) registers and triggers a job using a Quartz CRON trigger. This can be performed at 
 run-time rather than Spring wiring time which allows for simplified set-up of a large number of jobs that only 
 differ slightly:
 
@@ -117,9 +113,7 @@ differ slightly:
 adHocScheduler.schedule("jobName", job, "0/30 * * * * ?");
 ```
 
-[AdHocStarter](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/AdHocStarter.java)
-
-Similar to AdHocScheduler, but for immediately starting a job:
+[AdHocStarter](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/adhoc/AdHocStarter.java) is similar to AdHocScheduler, but used for immediately starting a job:
 
 ```java
 adHocStarter.start("jobName", job);

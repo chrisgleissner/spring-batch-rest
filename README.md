@@ -18,7 +18,7 @@ To integrate the REST API in your Spring Boot project, first add this dependency
 <dependency>
     <groupId>com.github.chrisgleissner</groupId>
     <artifactId>spring-batch-rest-api</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 

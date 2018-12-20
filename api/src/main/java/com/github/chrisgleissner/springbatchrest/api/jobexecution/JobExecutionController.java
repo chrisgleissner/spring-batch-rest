@@ -5,6 +5,8 @@ import org.springframework.batch.core.ExitStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -29,21 +31,23 @@ public class JobExecutionController {
     @GetMapping
     public Resources<JobExecutionResource> all(
             @RequestParam(value = "jobName", required = false) String jobName,
-            @RequestParam(value = "exitStatus", required = false) ExitStatus exitStatus,
+            @RequestParam(value = "exitCode", required = false) String exitCode,
             @RequestParam(value = "maxNumberOfJobInstances", required = false) Integer maxNumberOfJobInstances,
             @RequestParam(value = "maxNumberOfJobExecutionsPerInstance", required = false) Integer maxNumberOfJobExecutionsPerInstance) {
         Collection<JobExecutionResource> jobExecutions = jobExecutionService.jobExecutions(
                 Optional.ofNullable(jobName),
-                Optional.ofNullable(exitStatus),
+                Optional.ofNullable(exitCode),
                 Optional.ofNullable(maxNumberOfJobInstances),
                 Optional.ofNullable(maxNumberOfJobExecutionsPerInstance)).stream().map(JobExecutionResource::new).collect(Collectors.toList());
         return new Resources<>(jobExecutions, linkTo(methodOn(JobExecutionController.class)
-                .all(jobName, exitStatus, maxNumberOfJobInstances, maxNumberOfJobExecutionsPerInstance)).withSelfRel());
+                .all(jobName, exitCode, maxNumberOfJobInstances, maxNumberOfJobExecutionsPerInstance)).withSelfRel());
     }
 
 
     @PostMapping
-    public JobExecutionResource put(@RequestBody JobConfig jobConfig) {
-        return new JobExecutionResource(jobExecutionService.launch(jobConfig));
+    public ResponseEntity<JobExecutionResource> put(@RequestBody JobConfig jobConfig) {
+        JobExecutionResource resource = new JobExecutionResource(jobExecutionService.launch(jobConfig));
+        boolean failed = resource.getJobExecution().getExitCode().equals(ExitStatus.FAILED.getExitCode());
+        return new ResponseEntity<>(resource, failed ? HttpStatus.INTERNAL_SERVER_ERROR : HttpStatus.OK);
     }
 }

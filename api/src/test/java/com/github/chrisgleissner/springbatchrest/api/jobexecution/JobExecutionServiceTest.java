@@ -68,21 +68,21 @@ public class JobExecutionServiceTest {
     @Test
     public void jobExecutionsStatus() {
         Collection<JobExecution> jes =
-                jobExecutionService.jobExecutions(Optional.of("j1"), Optional.of(ExitStatus.COMPLETED), empty(), empty());
+                jobExecutionService.jobExecutions(Optional.of("j1"), Optional.of(ExitStatus.COMPLETED.getExitCode()), empty(), empty());
         assertThat(jes).hasSize(2);
     }
 
     @Test
     public void jobExecutionsMaxNumberOfJobInstances() {
         Collection<JobExecution> jes =
-                jobExecutionService.jobExecutions(empty(), Optional.of(ExitStatus.FAILED), Optional.of(1), empty());
+                jobExecutionService.jobExecutions(empty(), Optional.of(ExitStatus.FAILED.getExitCode()), Optional.of(1), empty());
         assertThat(jes).hasSize(3);
     }
 
     @Test
     public void jobExecutionsMaxNumberOfJobExecutionsPerInstance() {
         Collection<JobExecution> jes =
-                jobExecutionService.jobExecutions(empty(), Optional.of(ExitStatus.COMPLETED), empty(), Optional.of(1));
+                jobExecutionService.jobExecutions(empty(), Optional.of(ExitStatus.COMPLETED.getExitCode()), empty(), Optional.of(1));
         assertThat(jes).hasSize(3);
     }
 }

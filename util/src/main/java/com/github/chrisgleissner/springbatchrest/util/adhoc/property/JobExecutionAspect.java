@@ -23,7 +23,10 @@ public class JobExecutionAspect {
 
     @Before("within(org.springframework.batch.core.repository.JobRepository+) && execution(* update(..)) && args(jobExecution)")
     public void jobExecutionUpdated(JobExecution jobExecution) {
-        log.info("{} {}: {}", jobExecution.getStatus().name(), jobExecution.getJobInstance().getJobName(), jobExecution);
+        if (jobExecution.getStatus().isUnsuccessful())
+            log.error("{} {}: {}", jobExecution.getStatus().name(), jobExecution.getJobInstance().getJobName(), jobExecution);
+        else
+            log.info("{} {}: {}", jobExecution.getStatus().name(), jobExecution.getJobInstance().getJobName(), jobExecution);
         consumers.forEach(l -> l.accept(jobExecution));
     }
 }

@@ -52,8 +52,7 @@ public class JobBuilder {
     public Job createJob(String name, Runnable r) {
         return registerJob(jobs.get(name)
                 .incrementer(new RunIdIncrementer())
-                .flow(steps.get("step").allowStartIfComplete(true).tasklet(new RunnableTaskletAdapter(r)).build())
-                .end().build());
+                .start(steps.get("step").allowStartIfComplete(true).tasklet(new RunnableTaskletAdapter(r)).build()).build());
     }
 
     private class RunnableTaskletAdapter implements Tasklet {

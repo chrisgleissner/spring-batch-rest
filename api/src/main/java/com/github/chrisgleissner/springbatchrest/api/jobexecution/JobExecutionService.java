@@ -38,11 +38,11 @@ public class JobExecutionService {
     }
 
     public Collection<JobExecution> jobExecutions(Optional<String> jobNameRegexp,
-                                                  Optional<ExitStatus> exitStatus,
+                                                  Optional<String> exitCode,
                                                   Optional<Integer> maxNumberOfJobInstances,
                                                   Optional<Integer> maxNumberOfJobExecutionsPerInstance) {
-        logger.debug("Getting createJob excecutions(jobNameRegexp={}, exitStatus={}, maxNumberOfJobInstances{}, maxNumberOfJobExecutionsPerInstance={}",
-                jobNameRegexp, exitStatus, maxNumberOfJobInstances, maxNumberOfJobExecutionsPerInstance);
+        logger.debug("Getting createJob excecutions(jobNameRegexp={}, exitCode={}, maxNumberOfJobInstances{}, maxNumberOfJobExecutionsPerInstance={}",
+                jobNameRegexp, exitCode, maxNumberOfJobInstances, maxNumberOfJobExecutionsPerInstance);
 
         Set<JobExecution> allJobExecutions = new TreeSet<>();
         List<String> jobNames = jobExplorer.getJobNames();
@@ -68,7 +68,7 @@ public class JobExecutionService {
                 logger.warn("Could not get executions for job {}", jobName, e);
             }
         }
-        return allJobExecutions.stream().filter(je -> !exitStatus.isPresent() || exitStatus.get().equals(je.getExitStatus())).collect(toSet());
+        return allJobExecutions.stream().filter(je -> !exitCode.isPresent() || exitCode.get().equals(je.getExitCode())).collect(toSet());
     }
 
     public JobExecution launch(JobConfig jobConfig) {

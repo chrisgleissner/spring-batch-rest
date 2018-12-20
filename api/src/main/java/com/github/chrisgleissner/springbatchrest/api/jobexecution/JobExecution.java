@@ -1,25 +1,34 @@
 package com.github.chrisgleissner.springbatchrest.api.jobexecution;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.github.chrisgleissner.springbatchrest.util.DateUtil;
 import com.google.common.base.Throwables;
+import jdk.nashorn.internal.runtime.regexp.joni.ast.StringNode;
 import lombok.Builder;
 import lombok.Value;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
 import static java.util.stream.Collectors.toList;
+import static org.springframework.util.StringUtils.hasText;
 
 @Value
 @Builder
 public class JobExecution implements Comparable<JobExecution> {
+
+    private static final String EXIT_CODE = "exitCode";
+    private static final String EXIT_DESCRIPTION = "exitDescription";
 
     public static JobExecution fromSpring(org.springframework.batch.core.JobExecution je) {
         return JobExecution.builder()
@@ -28,7 +37,8 @@ public class JobExecution implements Comparable<JobExecution> {
                 .jobName(je.getJobInstance().getJobName())
                 .startTime(DateUtil.localDateTime(je.getStartTime()))
                 .endTime(DateUtil.localDateTime(je.getEndTime()))
-                .exitStatus(je.getExitStatus())
+                .exitCode(je.getExitStatus() == null ? null : je.getExitStatus().getExitCode())
+                .exitDescription(je.getExitStatus() == null ? null : je.getExitStatus().getExitDescription())
                 .status(je.getStatus())
                 .exceptions(je.getFailureExceptions().stream().map(e -> e.getMessage() + ": " + Throwables.getStackTraceAsString(e)).collect(toList()))
                 .build();
@@ -39,10 +49,11 @@ public class JobExecution implements Comparable<JobExecution> {
     private String jobName;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    @JsonSerialize(using = ExitStatusSerializer.class)
-    private ExitStatus exitStatus;
+    private String exitCode;
+    private String exitDescription;
     @JsonSerialize(using = BatchStatusSerializer.class)
     private BatchStatus status;
+
     private Collection<String> exceptions;
 
     @Override
@@ -55,17 +66,10 @@ public class JobExecution implements Comparable<JobExecution> {
         return result;
     }
 
-    static class ExitStatusSerializer extends JsonSerializer<ExitStatus> {
-        @Override
-        public void serialize(ExitStatus exitStatus, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-            jsonGenerator.writeString(exitStatus.getExitCode());
-        }
-    }
-
     static class BatchStatusSerializer extends JsonSerializer<BatchStatus> {
         @Override
-        public void serialize(BatchStatus batchStatus, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-            jsonGenerator.writeString(batchStatus.name());
+        public void serialize(BatchStatus batchStatus, JsonGenerator jsonGen, SerializerProvider serializerProvider) throws IOException {
+            jsonGen.writeString(batchStatus.name());
         }
     }
 }

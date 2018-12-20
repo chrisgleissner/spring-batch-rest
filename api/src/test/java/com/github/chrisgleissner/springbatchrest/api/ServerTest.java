@@ -9,6 +9,7 @@ import com.github.chrisgleissner.springbatchrest.util.adhoc.JobConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,6 +46,7 @@ public class ServerTest {
 
     private static final String JOB_NAME = "ServerTest-job";
     private static final String PROPERTY_NAME = "ServerTest-property";
+    private static final String EXCEPTION_MESSAGE_PROPERTY_NAME = "ServerTest-exceptionMessage";
     private static final String CRON_EXPRESSION = "0/1 * * * * ?";
 
     private static Set<String> propertyValues = new ConcurrentSkipListSet<>();
@@ -68,6 +70,11 @@ public class ServerTest {
             Job job = jobBuilder.createJob(JOB_NAME, () -> {
                 String propertyValue = JobProperties.of(JOB_NAME).getProperty(PROPERTY_NAME);
                 propertyValues.add(propertyValue);
+
+                String exceptionMessage = JobProperties.of(JOB_NAME).getProperty(EXCEPTION_MESSAGE_PROPERTY_NAME);
+                if (exceptionMessage != null)
+                    throw new RuntimeException(exceptionMessage);
+
                 jobExecutedOnce.countDown();
             });
             adHocScheduler.schedule(JOB_NAME, job, CRON_EXPRESSION);
@@ -82,7 +89,7 @@ public class ServerTest {
         assertThat(restTemplate.getForObject(url("/jobExecutions?exitStatus=COMPLETED"), String.class))
                 .contains("\"status\":\"COMPLETED\"").contains("\"id\":0,\"jobId\":0");
         assertThat(restTemplate.getForObject(url("/jobExecutions?exitStatus=FAILED"), String.class))
-                .contains("jobExecutions?exitStatus=exitCode%3DFAILED");
+                .contains("\"exitCode\":\"FAILED\",\"exitDescription\":\"java.lang.RuntimeException");
     }
 
     @Test
@@ -95,8 +102,16 @@ public class ServerTest {
         JobExecution je2 = startJob("2");
         assertThat(propertyValues).containsExactly("0", "1", "2");
 
-        assertThat(je1.getExitStatus()).isEqualTo(COMPLETED);
-        assertThat(je2.getExitStatus()).isEqualTo(COMPLETED);
+        assertThat(je1.getExitCode()).isEqualTo(COMPLETED.getExitCode());
+        assertThat(je2.getExitCode()).isEqualTo(COMPLETED.getExitCode());
+    }
+
+    @Test
+    public void jobExceptionMessageIsPropagatedToClient() {
+        String exceptionMessage = "excepted exception";
+        JobExecution je = startJobThatThrowsException(exceptionMessage);
+        assertThat(je.getExitCode()).isEqualTo(ExitStatus.FAILED.getExitCode());
+        assertThat(je.getExitDescription()).contains(exceptionMessage);
     }
 
     private JobExecution startJob(String propertyValue) {
@@ -104,6 +119,14 @@ public class ServerTest {
                 jobConfig.toBuilder().property(PROPERTY_NAME, propertyValue).build(),
                 JobExecutionResource.class);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        return responseEntity.getBody().getJobExecution();
+    }
+
+    private JobExecution startJobThatThrowsException(String exceptionMessage) {
+        ResponseEntity<JobExecutionResource> responseEntity = restTemplate.postForEntity(url("/jobExecutions"),
+                jobConfig.toBuilder().property(EXCEPTION_MESSAGE_PROPERTY_NAME, exceptionMessage).build(),
+                JobExecutionResource.class);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
         return responseEntity.getBody().getJobExecution();
     }
 

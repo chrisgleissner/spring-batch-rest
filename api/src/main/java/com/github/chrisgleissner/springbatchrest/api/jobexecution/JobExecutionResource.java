@@ -1,7 +1,5 @@
 package com.github.chrisgleissner.springbatchrest.api.jobexecution;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.hateoas.ResourceSupport;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;

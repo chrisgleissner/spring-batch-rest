@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = AdHocBatchConfig.class)
-@TestPropertySource(properties = "foo=bar" )
+@TestPropertySource(properties = "foo=bar")
 public class AdHocStarterTest {
 
     @Autowired

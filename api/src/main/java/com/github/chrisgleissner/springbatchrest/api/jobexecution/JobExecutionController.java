@@ -3,7 +3,6 @@ package com.github.chrisgleissner.springbatchrest.api.jobexecution;
 import com.github.chrisgleissner.springbatchrest.util.adhoc.JobConfig;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

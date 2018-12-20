@@ -96,6 +96,7 @@ public class AdHocScheduler {
             throw new RuntimeException("Could not resumse Quartz scheduler", e);
         }
     }
+
     public void stop() {
         try {
             scheduler.shutdown();

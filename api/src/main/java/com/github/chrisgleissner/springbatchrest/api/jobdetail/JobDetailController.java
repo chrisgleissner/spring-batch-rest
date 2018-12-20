@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController

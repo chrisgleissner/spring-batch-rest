@@ -6,8 +6,6 @@ import org.springframework.core.env.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.lang.String.format;
-
 public class JobPropertyResolver extends PropertySourcesPropertyResolver {
 
     private final JobConfig jobConfig;

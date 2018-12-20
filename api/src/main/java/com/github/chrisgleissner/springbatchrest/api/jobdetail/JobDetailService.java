@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static com.github.chrisgleissner.springbatchrest.util.adhoc.QuartzJobLauncher.JOB_NAME;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 import static java.util.stream.Collectors.toList;
 import static org.quartz.impl.matchers.GroupMatcher.jobGroupEquals;
-import static com.github.chrisgleissner.springbatchrest.util.adhoc.QuartzJobLauncher.JOB_NAME;
 
 @Slf4j
 @Service

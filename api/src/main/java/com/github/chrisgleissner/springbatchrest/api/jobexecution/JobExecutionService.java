@@ -5,7 +5,6 @@ import com.github.chrisgleissner.springbatchrest.util.adhoc.AdHocStarter;
 import com.github.chrisgleissner.springbatchrest.util.adhoc.JobConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.beans.factory.annotation.Autowired;

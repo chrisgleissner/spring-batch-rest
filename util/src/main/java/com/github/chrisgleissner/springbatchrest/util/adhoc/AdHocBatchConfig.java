@@ -17,7 +17,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor;
 
 import javax.sql.DataSource;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

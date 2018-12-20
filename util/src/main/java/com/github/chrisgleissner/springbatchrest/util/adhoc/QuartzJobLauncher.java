@@ -3,15 +3,12 @@ package com.github.chrisgleissner.springbatchrest.util.adhoc;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
-import org.slf4j.Logger;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.configuration.JobLocator;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.scheduling.quartz.QuartzJobBean;
-
-import static org.slf4j.LoggerFactory.getLogger;
 
 @Slf4j
 public class QuartzJobLauncher extends QuartzJobBean {

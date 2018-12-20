@@ -1,6 +1,5 @@
 package com.github.chrisgleissner.springbatchrest.api.job;
 
-import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.hateoas.ResourceSupport;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;

@@ -1,27 +1,20 @@
 package com.github.chrisgleissner.springbatchrest.api.jobexecution;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.TreeNode;
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.github.chrisgleissner.springbatchrest.util.DateUtil;
 import com.google.common.base.Throwables;
-import jdk.nashorn.internal.runtime.regexp.joni.ast.StringNode;
 import lombok.Builder;
 import lombok.Value;
 import org.springframework.batch.core.BatchStatus;
-import org.springframework.batch.core.ExitStatus;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
 import static java.util.stream.Collectors.toList;
-import static org.springframework.util.StringUtils.hasText;
 
 @Value
 @Builder

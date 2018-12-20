@@ -3,7 +3,6 @@ package com.github.chrisgleissner.springbatchrest.util.adhoc;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.configuration.DuplicateJobException;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;

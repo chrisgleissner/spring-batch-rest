@@ -63,9 +63,11 @@ The following REST endpoints are available:
 
 | HTTP Method  | Path                   | Description  |
 |--------------|------------------------|--------------|
-| GET          | /jobExecutions         | All job executions |
+| GET          | /jobExecutions         | Latest 3 executions for each job |
+| GET          | /jobExecutions?limitPerJob=1000  | Latest 1000 executions for each job |
+| GET          | /jobExecutions?jobName=foo&exitCode=FAILED&limitPerJob=10 | Latest 10 failed executions for 'foo' job |
 | GET          | /jobExecutions/{id}    | Single job execution |
-| POST         | /jobExecutions         | Start job execution |
+| POST         | /jobExecutions         | Start job execution with optional property overrides |
 
 #### Quartz Schedules
 

@@ -6,12 +6,12 @@
     <parent>
         <groupId>com.github.chrisgleissner</groupId>
         <artifactId>spring-batch-rest</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.2.1</version>
     </parent>
 
     <groupId>com.github.chrisgleissner</groupId>
     <artifactId>spring-batch-rest-api</artifactId>
-    <version>1.2.1-SNAPSHOT</version>
+    <version>1.2.1</version>
     <name>spring-batch-rest-api</name>
 
     <dependencies>

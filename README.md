@@ -52,14 +52,14 @@ and then check the Swagger REST API docs at
 
 The following REST endpoints are available:
 
-#### Jobs
+### Jobs
 
 | HTTP Method  | Path                   | Description  |
 |--------------|------------------------|--------------|
 | GET          | /jobs                  | All jobs  |
 | GET          | /jobs/{jobName}        | Single job  |
 
-#### Job Executions
+### Job Executions
 
 | HTTP Method  | Path                   | Description  |
 |--------------|------------------------|--------------|
@@ -73,7 +73,7 @@ For performance reasons, `/jobExecutions` queries are performed against an in-me
 job executions. If the `limitPerJob` request parameter is larger than `100` (configurable via the `com.github.chrisgleissner.springbatchrest.maxNumberOfExecutionsPerJob` property), this cache is bypassed and the
 Spring Batch <a href="https://docs.spring.io/spring-batch/4.0.x/api/index.html?org/springframework/batch/core/explore/JobExplorer.html">JobExplorer</a> is used instead. 
 
-#### Quartz Schedules
+### Quartz Schedules
 
 | HTTP Method  | Path                   | Description  |
 |--------------|------------------------|--------------|

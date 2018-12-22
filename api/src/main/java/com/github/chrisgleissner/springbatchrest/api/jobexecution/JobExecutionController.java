@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
@@ -31,15 +31,13 @@ public class JobExecutionController {
     public Resources<JobExecutionResource> all(
             @RequestParam(value = "jobName", required = false) String jobName,
             @RequestParam(value = "exitCode", required = false) String exitCode,
-            @RequestParam(value = "maxNumberOfJobInstances", defaultValue = "1") Integer maxNumberOfJobInstances,
-            @RequestParam(value = "maxNumberOfJobExecutionsPerInstance", defaultValue = "3") Integer maxNumberOfJobExecutionsPerInstance) {
+            @RequestParam(value = "limitPerJob", defaultValue = "3") Integer limitPerJob) {
         Collection<JobExecutionResource> jobExecutions = jobExecutionService.jobExecutions(
                 Optional.ofNullable(jobName),
                 Optional.ofNullable(exitCode),
-                maxNumberOfJobInstances,
-                maxNumberOfJobExecutionsPerInstance).stream().map(JobExecutionResource::new).collect(Collectors.toList());
+                limitPerJob).stream().map(JobExecutionResource::new).collect(toList());
         return new Resources<>(jobExecutions, linkTo(methodOn(JobExecutionController.class)
-                .all(jobName, exitCode, maxNumberOfJobInstances, maxNumberOfJobExecutionsPerInstance)).withSelfRel());
+                .all(jobName, exitCode, limitPerJob)).withSelfRel());
     }
 
 

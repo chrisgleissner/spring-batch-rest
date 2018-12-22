@@ -91,7 +91,7 @@ public class ServerTest {
         assertThat(je1.getExitCode()).isEqualTo(COMPLETED.getExitCode());
         assertThat(je2.getExitCode()).isEqualTo(COMPLETED.getExitCode());
 
-        assertThat(restTemplate.getForObject(url("/jobExecutions?exitStatus=COMPLETED"), String.class))
+        assertThat(restTemplate.getForObject(url("/jobExecutions?exitCode=COMPLETED"), String.class))
                 .contains("\"status\":\"COMPLETED\"").contains("\"jobName\":\"ServerTest-job\"");
     }
 
@@ -102,7 +102,7 @@ public class ServerTest {
         assertThat(je.getExitCode()).isEqualTo(ExitStatus.FAILED.getExitCode());
         assertThat(je.getExitDescription()).contains(exceptionMessage);
 
-        assertThat(restTemplate.getForObject(url("/jobExecutions?exitStatus=FAILED"), String.class))
+        assertThat(restTemplate.getForObject(url("/jobExecutions?exitCode=FAILED"), String.class))
                 .contains("\"exitCode\":\"FAILED\",\"exitDescription\":\"java.lang.RuntimeException");
     }
 

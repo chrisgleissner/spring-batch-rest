@@ -9,7 +9,7 @@ import org.springframework.batch.core.configuration.JobRegistry;
 
 import java.util.Collection;
 
-import static com.github.chrisgleissner.springbatchrest.api.MockSetup.configureMock;
+import static com.github.chrisgleissner.springbatchrest.api.Fixtures.configureMock;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)

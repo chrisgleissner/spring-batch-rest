@@ -19,13 +19,13 @@ To integrate the REST API in your Spring Boot project, first add a dependency fo
 <dependency>
     <groupId>com.github.chrisgleissner</groupId>
     <artifactId>spring-batch-rest-api</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
 </dependency>
 ```
 
 or Gradle:
 ```
-compile 'com.github.chrisgleissner:spring-batch-rest-api:1.2.0'
+compile 'com.github.chrisgleissner:spring-batch-rest-api:1.2.1'
 ```
 
 Then add `@EnableSpringBatchRest` to your Spring Boot application class, for <a href="https://github.com/chrisgleissner/spring-batch-rest/blob/master/example/src/main/java/com/github/chrisgleissner/springbatchrest/example/SpringBatchRestSampleApplication.java">example</a>:
@@ -69,9 +69,17 @@ The following REST endpoints are available:
 | GET          | /jobExecutions/{id}    | Single job execution |
 | POST         | /jobExecutions         | Start job execution with optional property overrides |
 
-For performance reasons, `/jobExecutions` queries are performed against an in-memory cache of recent 
-job executions. If the `limitPerJob` request parameter is larger than `100` (configurable via the `com.github.chrisgleissner.springbatchrest.maxNumberOfExecutionsPerJob` property), this cache is bypassed and the
-Spring Batch <a href="https://docs.spring.io/spring-batch/4.0.x/api/index.html?org/springframework/batch/core/explore/JobExplorer.html">JobExplorer</a> is used instead. 
+Notes: 
+
+* For performance reasons, `/jobExecutions` queries are performed against an in-memory cache of recent 
+job executions. If the `limitPerJob` request parameter is larger than `100`, this cache is bypassed and the
+Spring Batch <a href="https://docs.spring.io/spring-batch/4.0.x/api/index.html?org/springframework/batch/core/explore/JobExplorer.html">JobExplorer</a> is used instead.
+You can change the value `100` with the  `com.github.chrisgleissner.springbatchrest.maxNumberOfExecutionsPerJob` property.
+
+* Spring Batch prevents mutiple invocations of a job unless you use different properties (aka job parameters) each time. To bypass this, a unique property (ie. a random UUID) is added to each job invocation. 
+You can control this feature via the `com.github.chrisgleissner.springbatchrest.addUniqueJobParameter` property.
+
+ 
 
 ### Quartz Schedules
 

@@ -40,7 +40,7 @@ public class AdHocScheduler {
     /**
      * Schedules a Spring Batch job via a Quartz cron expression.
      */
-    public void schedule(String jobName, Job job, String cronExpression) {
+    public synchronized void schedule(String jobName, Job job, String cronExpression) {
         log.debug("Scheduling job {} with CRON expression {}", jobName, cronExpression);
         try {
             jobBuilder.registerJob(job);
@@ -66,7 +66,7 @@ public class AdHocScheduler {
     /**
      * Starts the Quartz scheduler unless it is already started. Necessary for any scheduled jobs to start.
      */
-    public void start() {
+    public synchronized void start() {
         try {
             if (!scheduler.isStarted()) {
                 scheduler.start();
@@ -79,28 +79,34 @@ public class AdHocScheduler {
         }
     }
 
-    public void pause() {
+    public synchronized void pause() {
         try {
-            scheduler.pauseAll();
-            log.info("Paused Quartz scheduler");
+            if (scheduler.isStarted() && !scheduler.isInStandbyMode()) {
+                scheduler.pauseAll();
+                log.info("Paused Quartz scheduler");
+            }
         } catch (Exception e) {
             throw new RuntimeException("Could not pause Quartz scheduler", e);
         }
     }
 
-    public void resume() {
+    public synchronized void resume() {
         try {
-            scheduler.resumeAll();
-            log.info("Resumed Quartz scheduler");
+            if (scheduler.isStarted() && scheduler.isInStandbyMode()) {
+                scheduler.resumeAll();
+                log.info("Resumed Quartz scheduler");
+            }
         } catch (Exception e) {
             throw new RuntimeException("Could not resumse Quartz scheduler", e);
         }
     }
 
-    public void stop() {
+    public synchronized void stop() {
         try {
-            scheduler.shutdown();
-            log.info("Stopped Quartz scheduler");
+            if (scheduler.isStarted() && !scheduler.isShutdown()) {
+                scheduler.shutdown();
+                log.info("Stopped Quartz scheduler");
+            }
         } catch (Exception e) {
             throw new RuntimeException("Could not stop Quartz scheduler", e);
         }

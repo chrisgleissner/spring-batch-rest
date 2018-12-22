@@ -49,6 +49,7 @@ public class AdHocSchedulerTest {
         scheduler.start();
 
         listener.awaitCompletionOfJobs(NUMBER_OF_JOBS * NUMBER_OF_EXECUTIONS_PER_JOB, 5_000);
+        scheduler.stop();
 
         assertThat(writer.getItems().size(), is(NUMBER_OF_EXECUTIONS_PER_JOB * (CSV1_ROWS + CSV2_ROWS)));
         assertThat(writer.getItems().iterator().next().getFirstName(), is("JILL"));
@@ -58,7 +59,7 @@ public class AdHocSchedulerTest {
         return scheduler.jobs().get(jobName)
                 .incrementer(new RunIdIncrementer()) // adds unique parameter on each run so that createJob can be rerun
                 .listener(listener)
-                .flow(scheduler.steps().get("step")
+                .start(scheduler.steps().get("step")
                         .<Person, Person>chunk(10)
                         .reader(new FlatFileItemReaderBuilder<Person>()
                                 .name("personItemReader")
@@ -74,6 +75,6 @@ public class AdHocSchedulerTest {
                         .writer(writer)
                         .allowStartIfComplete(true)
                         .build())
-                .end().build();
+                .build();
     }
 }

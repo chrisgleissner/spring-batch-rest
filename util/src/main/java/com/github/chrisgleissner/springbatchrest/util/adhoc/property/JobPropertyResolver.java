@@ -5,6 +5,9 @@ import org.springframework.core.env.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+
+import static java.util.Collections.emptyMap;
 
 public class JobPropertyResolver extends PropertySourcesPropertyResolver {
 
@@ -17,7 +20,7 @@ public class JobPropertyResolver extends PropertySourcesPropertyResolver {
 
     private static PropertySources propertySources(JobConfig jobConfig, Environment env) {
         MutablePropertySources propertySources = new MutablePropertySources();
-        Map<String, Object> jobProperties = new HashMap<>(jobConfig.getProperties());
+        Map<String, Object> jobProperties = new HashMap<>(Optional.ofNullable(jobConfig.getProperties()).orElse(emptyMap()));
         propertySources.addFirst(new MapPropertySource(jobConfig.getName(), jobProperties));
         ((AbstractEnvironment) env).getPropertySources().forEach(ps -> propertySources.addLast(ps));
         return propertySources;

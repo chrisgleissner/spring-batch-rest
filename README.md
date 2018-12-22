@@ -79,8 +79,6 @@ You can change the value `100` with the  `com.github.chrisgleissner.springbatchr
 * Spring Batch prevents mutiple invocations of a job unless you use different properties (aka job parameters) each time. To bypass this, a unique property (ie. a random UUID) is added to each job invocation. 
 You can control this feature via the `com.github.chrisgleissner.springbatchrest.addUniqueJobParameter` property.
 
- 
-
 ### Quartz Schedules
 
 | HTTP Method  | Path                   | Description  |
@@ -88,6 +86,20 @@ You can control this feature via the `com.github.chrisgleissner.springbatchrest.
 | GET          | /jobDetails            | All Quartz schedules   |
 | GET          | /jobsDetails/{quartzGroupName}/{quartzJobName}  | Single Quartz schedule |
 
+### Error Handling
+
+Where possible, subclasses of the Spring Batch <a href="https://docs.spring.io/spring-batch/trunk/apidocs/org/springframework/batch/core/JobExecutionException.html">JobExecutionException</a>
+are mapped to an appropriate HTTP status code and the response body contains further details. 
+
+For example, trying to start a nonexistent job results in a 404:
+```
+{
+  "status": "404 NOT_FOUND",
+  "message": "No job configuration with the name [foo] was registered",
+  "exception": "NoSuchJobException",
+  "detail": "Failed to start job 'foo' with JobConfig(name=foo, properties={foo=baz10}, asynchronous=false). Reason: No job configuration with the name [foo] was registered"
+}
+```
 
 ## Job Property Overrides
 

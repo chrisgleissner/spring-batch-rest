@@ -2,10 +2,7 @@ package com.github.chrisgleissner.springbatchrest.util.adhoc;
 
 import com.github.chrisgleissner.springbatchrest.util.adhoc.property.JobPropertyResolvers;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameter;
-import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.JobLocator;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
@@ -16,6 +13,7 @@ import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 
+import javax.batch.operations.BatchRuntimeException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -65,8 +63,12 @@ public class AdHocStarter {
             log.info("Starting {} with {}", jobConfig.getName(), jobConfig);
             JobLauncher jobLauncher = jobConfig.isAsynchronous() ? asyncJobLauncher : syncJobLauncher;
             return jobLauncher.run(job, jobParameters);
+        } catch (JobExecutionException e) {
+            throw new BatchRuntimeException(format("Failed to start job '%s' with %s. Reason: %s",
+                    jobConfig.getName(), jobConfig, e.getMessage()), e);
         } catch (Exception e) {
-            throw new RuntimeException(format("Failed to start job '%s'. Reason: %s", jobConfig.getName(), e.getMessage()), e);
+            throw new RuntimeException(format("Failed to start job '%s' with %s. Reason: %s",
+                    jobConfig.getName(), jobConfig, e.getMessage()), e);
         }
     }
 }

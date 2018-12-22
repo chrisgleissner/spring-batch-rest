@@ -4,13 +4,11 @@ import com.github.chrisgleissner.springbatchrest.util.adhoc.property.JobExecutio
 import com.google.common.collect.EvictingQueue;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Consumer;
@@ -28,7 +26,7 @@ public class CachedJobExecutionProvider implements Consumer<JobExecution>, JobEx
 
     private final int maxNumberOfExecutionsPerJob;
     private final AllJobExecutionProvider allJobExecutionProvider;
-    private final Map<String, JobExecutions> jobExecutionsByJobName = new ConcurrentHashMap<>();
+    private final Map<String, JobExecutions> jobExecutionsByJobName = new HashMap<>();
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
     public CachedJobExecutionProvider(JobExecutionAspect executionAspect, AllJobExecutionProvider allJobExecutionProvider,
@@ -62,23 +60,18 @@ public class CachedJobExecutionProvider implements Consumer<JobExecution>, JobEx
 
     @Data
     class JobExecutions {
-        private Queue<JobExecution> failedExecutions;
-        private Queue<JobExecution> allExecutions;
-
-        JobExecutions() {
-            allExecutions = EvictingQueue.create(maxNumberOfExecutionsPerJob);
-            failedExecutions = EvictingQueue.create(maxNumberOfExecutionsPerJob);
-        }
+        private Map<String, Queue<JobExecution>> jobExecutionsByExitCode = new HashMap<>();
+        private Queue<JobExecution> jobExecutions = EvictingQueue.create(maxNumberOfExecutionsPerJob);
 
         Collection<JobExecution> getJobExecutions(Optional<String> exitCode) {
-            return exitCode.isPresent() && ExitStatus.FAILED.getExitCode().equals(exitCode.get()) ? failedExecutions : allExecutions;
+            return exitCode.isPresent() ? jobExecutionsByExitCode.get(exitCode.get()) : jobExecutions;
         }
 
 
         void add(JobExecution jobExecution) {
-            allExecutions.add(jobExecution);
-            if (ExitStatus.FAILED.getExitCode().equals(jobExecution.getExitStatus().getExitCode()))
-                failedExecutions.add(jobExecution);
+            jobExecutionsByExitCode.computeIfAbsent(jobExecution.getExitStatus().getExitCode(),
+                    (exitCode) -> EvictingQueue.create(maxNumberOfExecutionsPerJob)).add(jobExecution);
+            jobExecutions.add(jobExecution);
         }
     }
 
@@ -87,10 +80,10 @@ public class CachedJobExecutionProvider implements Consumer<JobExecution>, JobEx
         if (!je.isRunning()) {
             lock.writeLock().lock();
             try {
+                String jobName = je.getJobInstance().getJobName();
+                jobExecutionsByJobName.computeIfAbsent(jobName, (n) -> new JobExecutions()).add(je);
                 log.debug("Added JobExecution(id={}, name={}, jobId={}, jobInstanceIdId={}): {}. Details: {}",
-                        je.getId(), je.getJobInstance().getJobName(), je.getJobId(), je.getJobInstance().getInstanceId(), je.getExitStatus().getExitCode(), je);
-                JobExecutions jes = jobExecutionsByJobName.computeIfAbsent(je.getJobInstance().getJobName(), (n) -> new JobExecutions());
-                jes.add(je);
+                        je.getId(), jobName, je.getJobId(), je.getJobInstance().getInstanceId(), je.getExitStatus().getExitCode(), je);
             } finally {
                 lock.writeLock().unlock();
             }

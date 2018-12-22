@@ -29,17 +29,26 @@ public class CachedJobExecutionProviderTest extends AbstractJobExecutionProvider
         provider = new CachedJobExecutionProvider(executionAspect, allProvider, MAX_CACHED_RESULTS_PER_JOB_NAME);
         configureForJobExecutionsService(provider);
 
-        assertExecutions(JOB_NAME_1, true, 2);
-        assertExecutions(JOB_NAME_1, false, 1);
+        assertExecutions(JOB_NAME_1, 2);
+        assertExecutions(JOB_NAME_1, "FAILED", 1);
 
-        assertExecutions(JOB_NAME_2, true, 4);
-        assertExecutions(JOB_NAME_2, false, 2);
+        assertExecutions(JOB_NAME_2, 4);
+        assertExecutions(JOB_NAME_2, "FAILED", 2);
     }
 
-    private void assertExecutions(String jobName, boolean all, int expectedSize) {
+    private void assertExecutions(String jobName, String exitCode, int expectedSize) {
         assertThat(provider).extracting("jobExecutionsByJobName")
                 .extracting(jobName)
-                .flatExtracting(all ? "allExecutions" : "failedExecutions").hasSize(expectedSize);
+                .extracting("jobExecutionsByExitCode")
+                .flatExtracting(exitCode)
+                .hasSize(expectedSize);
+    }
+
+    private void assertExecutions(String jobName, int expectedSize) {
+        assertThat(provider).extracting("jobExecutionsByJobName")
+                .extracting(jobName)
+                .flatExtracting("jobExecutions")
+                .hasSize(expectedSize);
     }
 
     @Test

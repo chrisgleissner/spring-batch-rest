@@ -31,13 +31,13 @@ public class JobExecutionController {
     public Resources<JobExecutionResource> all(
             @RequestParam(value = "jobName", required = false) String jobName,
             @RequestParam(value = "exitCode", required = false) String exitCode,
-            @RequestParam(value = "maxNumberOfJobInstances", required = false) Integer maxNumberOfJobInstances,
-            @RequestParam(value = "maxNumberOfJobExecutionsPerInstance", required = false) Integer maxNumberOfJobExecutionsPerInstance) {
+            @RequestParam(value = "maxNumberOfJobInstances", defaultValue = "1") Integer maxNumberOfJobInstances,
+            @RequestParam(value = "maxNumberOfJobExecutionsPerInstance", defaultValue = "3") Integer maxNumberOfJobExecutionsPerInstance) {
         Collection<JobExecutionResource> jobExecutions = jobExecutionService.jobExecutions(
                 Optional.ofNullable(jobName),
                 Optional.ofNullable(exitCode),
-                Optional.ofNullable(maxNumberOfJobInstances),
-                Optional.ofNullable(maxNumberOfJobExecutionsPerInstance)).stream().map(JobExecutionResource::new).collect(Collectors.toList());
+                maxNumberOfJobInstances,
+                maxNumberOfJobExecutionsPerInstance).stream().map(JobExecutionResource::new).collect(Collectors.toList());
         return new Resources<>(jobExecutions, linkTo(methodOn(JobExecutionController.class)
                 .all(jobName, exitCode, maxNumberOfJobInstances, maxNumberOfJobExecutionsPerInstance)).withSelfRel());
     }

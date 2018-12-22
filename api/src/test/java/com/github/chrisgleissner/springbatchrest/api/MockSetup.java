@@ -44,9 +44,6 @@ public class MockSetup {
     }
 
     public static void configureMockForJobExecutionsService(JobExplorer jobExplorer) throws NoSuchJobException {
-        when(jobExplorer.getJobInstanceCount("j1")).thenReturn(2);
-        when(jobExplorer.getJobInstanceCount("j2")).thenReturn(3);
-
         when(jobExplorer.getJobInstances(eq("j1"), anyInt(), anyInt())).thenReturn(newArrayList(j11, j12));
         when(jobExplorer.getJobInstances(eq("j2"), anyInt(), anyInt())).thenReturn(newArrayList(j21, j22, j23));
 

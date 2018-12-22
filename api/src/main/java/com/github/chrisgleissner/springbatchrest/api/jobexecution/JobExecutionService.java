@@ -38,8 +38,8 @@ public class JobExecutionService {
 
     public Collection<JobExecution> jobExecutions(Optional<String> jobNameRegexp,
                                                   Optional<String> exitCode,
-                                                  Optional<Integer> maxNumberOfJobInstances,
-                                                  Optional<Integer> maxNumberOfJobExecutionsPerInstance) {
+                                                  int maxNumberOfJobInstances,
+                                                  int maxNumberOfJobExecutionsPerInstance) {
         logger.debug("Getting createJob excecutions(jobNameRegexp={}, exitCode={}, maxNumberOfJobInstances{}, maxNumberOfJobExecutionsPerInstance={}",
                 jobNameRegexp, exitCode, maxNumberOfJobInstances, maxNumberOfJobExecutionsPerInstance);
 
@@ -52,13 +52,10 @@ public class JobExecutionService {
 
         for (String jobName : jobNames) {
             try {
-                int jobInstanceCount = jobExplorer.getJobInstanceCount(jobName);
-                List<JobInstance> jobInstances = jobExplorer.getJobInstances(jobName,
-                        Math.max(0, jobInstanceCount - maxNumberOfJobInstances.orElse(MAX_VALUE)),
-                        maxNumberOfJobInstances.orElse(MAX_VALUE));
+                List<JobInstance> jobInstances = jobExplorer.getJobInstances(jobName, 0, maxNumberOfJobInstances);
                 for (JobInstance jobInstance : jobInstances) {
                     List<JobExecution> jobExecutions = jobExplorer.getJobExecutions(jobInstance).stream()
-                            .limit(maxNumberOfJobExecutionsPerInstance.orElse(MAX_VALUE))
+                            .limit(maxNumberOfJobExecutionsPerInstance)
                             .map(JobExecution::fromSpring)
                             .collect(toList());
                     allJobExecutions.addAll(jobExecutions);

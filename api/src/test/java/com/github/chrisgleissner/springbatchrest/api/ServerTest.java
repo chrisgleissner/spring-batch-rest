@@ -79,14 +79,6 @@ public class ServerTest {
     }
 
     @Test
-    public void jobExecution() {
-        assertThat(restTemplate.getForObject(url("/jobExecutions?exitStatus=COMPLETED"), String.class))
-                .contains("\"status\":\"COMPLETED\"").contains("\"id\":0,\"jobId\":0");
-        assertThat(restTemplate.getForObject(url("/jobExecutions?exitStatus=FAILED"), String.class))
-                .contains("\"exitCode\":\"FAILED\",\"exitDescription\":\"java.lang.RuntimeException");
-    }
-
-    @Test
     public void jobsCanBeStartedWithDifferentProperties() {
         assertThat(propertyValues).containsExactly("0");
 
@@ -98,6 +90,9 @@ public class ServerTest {
 
         assertThat(je1.getExitCode()).isEqualTo(COMPLETED.getExitCode());
         assertThat(je2.getExitCode()).isEqualTo(COMPLETED.getExitCode());
+
+        assertThat(restTemplate.getForObject(url("/jobExecutions?exitStatus=COMPLETED"), String.class))
+                .contains("\"status\":\"COMPLETED\"").contains("\"jobName\":\"ServerTest-job\"");
     }
 
     @Test
@@ -106,6 +101,21 @@ public class ServerTest {
         JobExecution je = startJobThatThrowsException(exceptionMessage);
         assertThat(je.getExitCode()).isEqualTo(ExitStatus.FAILED.getExitCode());
         assertThat(je.getExitDescription()).contains(exceptionMessage);
+
+        assertThat(restTemplate.getForObject(url("/jobExecutions?exitStatus=FAILED"), String.class))
+                .contains("\"exitCode\":\"FAILED\",\"exitDescription\":\"java.lang.RuntimeException");
+    }
+
+    @Test
+    public void jobDetails() {
+        assertThat(restTemplate.getForObject(url("/jobDetails?springBatchJobName=" + JOB_NAME), String.class))
+                .contains(JOB_NAME);
+    }
+
+    @Test
+    public void swagger() {
+        assertThat(restTemplate.getForObject(url("v2/api-docs"), String.class))
+                .contains("{\"swagger\":\"2.0\"");
     }
 
     private JobExecution startJob(String propertyValue) {
@@ -122,18 +132,6 @@ public class ServerTest {
                 JobExecutionResource.class);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
         return responseEntity.getBody().getJobExecution();
-    }
-
-    @Test
-    public void jobDetails() {
-        assertThat(restTemplate.getForObject(url("/jobDetails?springBatchJobName=" + JOB_NAME), String.class))
-                .contains(JOB_NAME);
-    }
-
-    @Test
-    public void swagger() {
-        assertThat(restTemplate.getForObject(url("v2/api-docs"), String.class))
-                .contains("{\"swagger\":\"2.0\"");
     }
 
     private String url(String path) {

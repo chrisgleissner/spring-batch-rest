@@ -10,7 +10,7 @@ import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -18,7 +18,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Tests the ad-hoc Quartz scheduling of Spring Batch jobs, allowing for programmatic scheduling after Spring wiring.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @ContextConfiguration(classes = AdHocBatchConfig.class)
 public class AdHocSchedulerTest {
 

@@ -17,6 +17,7 @@ import java.util.Optional;
 
 import static com.github.chrisgleissner.springbatchrest.api.MockSetup.configureMock;
 import static com.github.chrisgleissner.springbatchrest.api.MockSetup.configureMockForJobExecutionsService;
+import static java.lang.Integer.MAX_VALUE;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,7 +48,7 @@ public class JobExecutionServiceTest {
     @Test
     public void jobExecutionsAll() {
         Collection<JobExecution> jes =
-                jobExecutionService.jobExecutions(empty(), empty(), empty(), empty());
+                jobExecutionService.jobExecutions(empty(), empty(), MAX_VALUE, MAX_VALUE);
         assertThat(jes).hasSize(6);
     }
 
@@ -61,28 +62,28 @@ public class JobExecutionServiceTest {
     @Test
     public void jobExecutionsJobNameRegexp() {
         Collection<JobExecution> jes =
-                jobExecutionService.jobExecutions(Optional.of("j1"), empty(), empty(), empty());
+                jobExecutionService.jobExecutions(Optional.of("j1"), empty(), MAX_VALUE, MAX_VALUE);
         assertThat(jes).hasSize(3);
     }
 
     @Test
     public void jobExecutionsStatus() {
         Collection<JobExecution> jes =
-                jobExecutionService.jobExecutions(Optional.of("j1"), Optional.of(ExitStatus.COMPLETED.getExitCode()), empty(), empty());
+                jobExecutionService.jobExecutions(Optional.of("j1"), Optional.of(ExitStatus.COMPLETED.getExitCode()), MAX_VALUE, MAX_VALUE);
         assertThat(jes).hasSize(2);
     }
 
     @Test
     public void jobExecutionsMaxNumberOfJobInstances() {
         Collection<JobExecution> jes =
-                jobExecutionService.jobExecutions(empty(), Optional.of(ExitStatus.FAILED.getExitCode()), Optional.of(1), empty());
+                jobExecutionService.jobExecutions(empty(), Optional.of(ExitStatus.FAILED.getExitCode()), 1, MAX_VALUE);
         assertThat(jes).hasSize(3);
     }
 
     @Test
     public void jobExecutionsMaxNumberOfJobExecutionsPerInstance() {
         Collection<JobExecution> jes =
-                jobExecutionService.jobExecutions(empty(), Optional.of(ExitStatus.COMPLETED.getExitCode()), empty(), Optional.of(1));
+                jobExecutionService.jobExecutions(empty(), Optional.of(ExitStatus.COMPLETED.getExitCode()), MAX_VALUE, 1);
         assertThat(jes).hasSize(3);
     }
 }

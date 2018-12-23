@@ -71,8 +71,8 @@ The following REST endpoints are available:
 
 | Parameter | Default Value | Description |
 |-----------|---------------|-------------|
-| jobName | empty | <a href="https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html">Regular expression</a> of the job names to consider. If absent, all job names are used. |
-| exitCode | empty | Exit code of the job execution. Can be `COMPLETED`, `EXECUTING`, `FAILED`, `NOOP`, `STOPPED` or `UNKNOWN` as per <a href="https://docs.spring.io/spring-batch/trunk/apidocs/org/springframework/batch/core/ExitStatus.html">ExitStatus</a>. If absent, all exit codes are used. |
+| jobName | empty | <a href="https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html">Regular expression</a> of the job names to consider. If empty, all job names are used. |
+| exitCode | empty | Exit code of the job execution. Can be `COMPLETED`, `EXECUTING`, `FAILED`, `NOOP`, `STOPPED` or `UNKNOWN` as per <a href="https://docs.spring.io/spring-batch/trunk/apidocs/org/springframework/batch/core/ExitStatus.html">ExitStatus</a>. If empty, all exit codes are used. |
 | limitPerJob | 3 | Maximum number of job executions to return for each job. |
 
 #### Examples
@@ -81,7 +81,7 @@ The following REST endpoints are available:
 |--------------|------------------------|--------------|
 | GET          | /jobExecutions?limitPerJob=1000  | Latest 1000 executions for each job |
 | GET          | /jobExecutions?jobName=foo&exitCode=FAILED | Latest 3 failed executions for 'foo' job |
-| GET          | /jobExecutions?jobName=foo&exitCode=FAILED&limitPerJob=10 | Latest 10 failed executions for 'foo' job |
+| GET          | /jobExecutions?jobName=foo.*&exitCode=FAILED&limitPerJob=10 | Latest 10 failed executions for jobs with a name starting with 'foo' |
 
 ### Quartz Schedules
 

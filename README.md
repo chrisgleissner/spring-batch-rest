@@ -95,7 +95,7 @@ The following REST endpoints are available:
 Where possible, subclasses of the Spring Batch <a href="https://docs.spring.io/spring-batch/trunk/apidocs/org/springframework/batch/core/JobExecutionException.html">JobExecutionException</a>
 are mapped to an appropriate HTTP status code and the response body contains further details. 
 
-For example, trying to start a nonexistent job results in a response with 404 status code and the following response body:
+For example, trying to start a nonexistent job results in a response with a 404 status code and the following response body:
 ```
 {
   "status": "404 NOT_FOUND",
@@ -119,6 +119,9 @@ Spring Batch <a href="https://docs.spring.io/spring-batch/4.0.x/api/index.html?o
 
 Large `jobExecutionCacheSize` values will create increase heap use, but small values combined with large `limitSize` request parameters
 will cause increased REST query latencies. Thus, if you increase this property value, you may also want to increase your heap size. 
+
+The cache only contains job executions since the Spring context création. If you want to be able to query job executions that were performed earlier, eg. during a prior JVM execution, you will want to disable caching. To do so, simply set the property to 0.
+
 
 ### Job Restart
 

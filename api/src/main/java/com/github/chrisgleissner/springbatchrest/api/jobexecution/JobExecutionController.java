@@ -1,6 +1,8 @@
 package com.github.chrisgleissner.springbatchrest.api.jobexecution;
 
 import com.github.chrisgleissner.springbatchrest.util.adhoc.JobConfig;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resources;
@@ -15,6 +17,7 @@ import static java.util.stream.Collectors.toList;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+@Api(tags = "Spring Batch Job Executions")
 @RestController
 @RequestMapping(value = "/jobExecutions", produces = "application/hal+json")
 public class JobExecutionController {
@@ -22,11 +25,13 @@ public class JobExecutionController {
     @Autowired
     private JobExecutionService jobExecutionService;
 
+    @ApiOperation("Get all Spring batch job execution by ID")
     @GetMapping("/{id}")
     public JobExecutionResource get(@PathVariable long id) {
         return new JobExecutionResource(jobExecutionService.jobExecution(id));
     }
 
+    @ApiOperation("Find Spring batch job executions by job name and exit code")
     @GetMapping
     public Resources<JobExecutionResource> all(
             @RequestParam(value = "jobName", required = false) String jobName,
@@ -40,7 +45,7 @@ public class JobExecutionController {
                 .all(jobName, exitCode, limitPerJob)).withSelfRel());
     }
 
-
+    @ApiOperation("Start a Spring Batch job execution")
     @PostMapping
     public ResponseEntity<JobExecutionResource> put(@RequestBody JobConfig jobConfig) {
         JobExecutionResource resource = new JobExecutionResource(jobExecutionService.launch(jobConfig));

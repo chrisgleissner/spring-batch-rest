@@ -4,19 +4,21 @@
 [![Maven Central](https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/com/github/chrisgleissner/spring-batch-rest-api/maven-metadata.xml.svg)](https://search.maven.org/artifact/com.github.chrisgleissner/spring-batch-rest-api)
 [![Coverage Status](https://coveralls.io/repos/github/chrisgleissner/spring-batch-rest/badge.svg?branch=master)](https://coveralls.io/github/chrisgleissner/spring-batch-rest?branch=master)
 
-REST API for Spring Batch, based on Spring MVC and Spring Boot.
+REST API for <a href="https://spring.io/projects/spring-batch">Spring Batch</a>, based on Spring MVC and Spring Boot 2.
 
 ## Features
 - Get information on jobs, job executions, and Quartz schedules
 - Start job execution (synchronous or asynchronous) with optional job property overrides. The job properties can
 either be obtained via a custom API or via standard Spring Batch job parameters, accessible from <a href="https://docs.spring.io/spring-batch/trunk/apidocs/org/springframework/batch/core/scope/StepScope.html">step-scoped beans</a>.
 
+The project compiles against both JDK 8 and JDK 11.
+
 ## Live Demo
 
 Check out the <a href="https://spring-batch-rest.herokuapp.com/swagger-ui.html">live demo</a> of this project's Swagger UI. This demo is automatically updated whenever the repo's master branch changes.
 
 To start the sample <a href="https://github.com/chrisgleissner/spring-batch-rest/tree/master/example/src/main/java/com/github/chrisgleissner/springbatchrest/example/PersonJobConfig.java">personJob<a> and see it completed, perform the following via this live demo:
-1. Click on `job-execution-controller`, then on `POST`. Now click on `Try it Out` on the right-hand side. Replace the contents of the `Example Value` input field with `{"name": "personJob"}` and press `Execute'. 
+1. Click on `Spring Batch Job Executions`, then on `POST`. Now click on `Try it Out` on the right-hand side. Replace the contents of the `Example Value` input field with `{"name": "personJob"}` and press `Execute'. 
 1. The job is now executed and after a few seconds, you should see that it completed in the response body.
 1. Now view your newly completed job in the <a href="https://spring-batch-rest.herokuapp.com/jobExecutions?jobName=personJob&limitPerJob=3">job execution overview<a>.
 

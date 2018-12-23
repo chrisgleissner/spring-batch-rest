@@ -19,13 +19,13 @@ To integrate the REST API in your Spring Boot project, first add a dependency fo
 <dependency>
     <groupId>com.github.chrisgleissner</groupId>
     <artifactId>spring-batch-rest-api</artifactId>
-    <version>1.2.2</version>
+    <version>1.2.3</version>
 </dependency>
 ```
 
 or Gradle:
 ```
-compile 'com.github.chrisgleissner:spring-batch-rest-api:1.2.2'
+compile 'com.github.chrisgleissner:spring-batch-rest-api:1.2.3'
 ```
 
 Then add `@EnableSpringBatchRest` to your Spring Boot application class, for <a href="https://github.com/chrisgleissner/spring-batch-rest/blob/master/example/src/main/java/com/github/chrisgleissner/springbatchrest/example/SpringBatchRestSampleApplication.java">example</a>:
@@ -63,11 +63,25 @@ The following REST endpoints are available:
 
 | HTTP Method  | Path                   | Description  |
 |--------------|------------------------|--------------|
-| GET          | /jobExecutions         | Latest 3 executions for each job, sorted by descending end time |
-| GET          | /jobExecutions?limitPerJob=1000  | Latest 1000 executions for each job |
-| GET          | /jobExecutions?jobName=foo&exitCode=FAILED&limitPerJob=10 | Latest 10 failed executions for 'foo' job |
+| GET          | /jobExecutions         | Latest 3 executions for each job, sorted by descending end time (or start time if still running) |
 | GET          | /jobExecutions/{id}    | Single job execution |
 | POST         | /jobExecutions         | Start job execution with optional property overrides |
+
+##### Request Parameters for GET `/jobExecutions` 
+
+| Parameter | Default Value | Description |
+|-----------|---------------|-------------|
+| jobName | empty | <a href="https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html">Regular expression</a> of the job names to consider. If absent, all job names are used. |
+| exitCode | empty | Exit code of the job execution. Can be `COMPLETED`, `EXECUTING`, `FAILED`, `NOOP`, `STOPPED` or `UNKNOWN` as per <a href="https://docs.spring.io/spring-batch/trunk/apidocs/org/springframework/batch/core/ExitStatus.html">ExitStatus</a>. If absent, all exit codes are used. |
+| limitPerJob | 3 | Maximum number of job executions to return for each job. |
+
+Examples:
+
+| HTTP Method  | Path                   | Description  |
+|--------------|------------------------|--------------|
+| GET          | /jobExecutions?limitPerJob=1000  | Latest 1000 executions for each job |
+| GET          | /jobExecutions?jobName=foo&exitCode=FAILED | Latest 3 failed executions for 'foo' job |
+| GET          | /jobExecutions?jobName=foo&exitCode=FAILED&limitPerJob=10 | Latest 10 failed executions for 'foo' job |
 
 ### Quartz Schedules
 
@@ -100,7 +114,7 @@ The default behaviour of the REST API can be tweaked via several Spring properti
 `com.github.chrisgleissner.springbatchrest.jobExecutionCacheSize` (default: 100)
 
 For performance reasons, `/jobExecutions` queries are performed against an in-memory cache of recent 
-job executions. If the `limitPerJob` request parameter is larger than `100`, this cache is bypassed and the
+job executions. If the `limitPerJob` request parameter is larger than the value of this property, the cache is bypassed and the
 Spring Batch <a href="https://docs.spring.io/spring-batch/4.0.x/api/index.html?org/springframework/batch/core/explore/JobExplorer.html">JobExplorer</a> is used instead.
 
 ### Job Restart

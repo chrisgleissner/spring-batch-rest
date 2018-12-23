@@ -32,7 +32,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringJUnitWebConfig
@@ -62,17 +61,29 @@ public class JobExecutionControllerTest {
         if (initialized.compareAndSet(false, true)) {
             configureMock(jobExplorer);
             configureForJobExecutionsService(jobExplorer);
-            when(jobExplorer.getJobExecution(je11.getId())).thenReturn(je11);
-
             configureMock(jobRegistry);
             configureForJobExecutionsService(cachedJobExecutionProvider);
         }
     }
 
     @Test
+    public void jobExecutionById() throws Exception {
+        when(jobExplorer.getJobExecution(je11.getId())).thenReturn(je11);
+        mockMvc.perform(get("/jobExecutions/" + je11.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$..jobExecution", hasSize(1)));
+    }
+
+    @Test
+    public void jobExecutionByIdNotFound() throws Exception {
+        mockMvc.perform(get("/jobExecutions/" + 10))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("{\"status\":\"404 NOT_FOUND\",\"message\":\"Could not find job execution with ID 10\",\"exception\":\"NoSuchJobExecutionException\",\"detail\":\"\"}"));
+    }
+
+    @Test
     public void jobExecutions() throws Exception {
         mockMvc.perform(get("/jobExecutions"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..jobExecution", hasSize(5)));
     }
@@ -80,7 +91,6 @@ public class JobExecutionControllerTest {
     @Test
     public void successfulJobExecutions() throws Exception {
         mockMvc.perform(get("/jobExecutions?exitCode=COMPLETED"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..jobExecution", hasSize(3)));
     }
@@ -88,7 +98,6 @@ public class JobExecutionControllerTest {
     @Test
     public void failedJobExecutions() throws Exception {
         mockMvc.perform(get("/jobExecutions?exitCode=FAILED"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..jobExecution", hasSize(3)));
     }
@@ -96,7 +105,6 @@ public class JobExecutionControllerTest {
     @Test
     public void successfulJobExecutionsPerJob() throws Exception {
         mockMvc.perform(get("/jobExecutions?jobName=j2&exitCode=COMPLETED"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..jobExecution", hasSize(2)));
     }
@@ -104,7 +112,6 @@ public class JobExecutionControllerTest {
     @Test
     public void successfulJobExecutionsPerJobAndLimited() throws Exception {
         mockMvc.perform(get("/jobExecutions?jobName=j2&exitCode=COMPLETED&limitPerJob=1"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..jobExecution", hasSize(1)));
     }

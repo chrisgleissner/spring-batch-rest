@@ -55,6 +55,12 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(e, apiError, new HttpHeaders(), status, request);
     }
 
+    @ExceptionHandler(javax.batch.operations.NoSuchJobExecutionException.class)
+    protected ResponseEntity<Object> handleNoSuchJobExecutionException(javax.batch.operations.NoSuchJobExecutionException e, WebRequest request) {
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        return handleExceptionInternal(e, new ApiError(status.toString(), e.getMessage(), e.getClass().getSimpleName(), ""), new HttpHeaders(), status, request);
+    }
+
     @NoArgsConstructor
     @AllArgsConstructor
     @Data

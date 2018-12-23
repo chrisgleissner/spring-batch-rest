@@ -10,6 +10,7 @@ import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.batch.operations.NoSuchJobExecutionException;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,7 +33,10 @@ public class JobExecutionService {
     }
 
     public JobExecution jobExecution(long executionId) {
-        return fromSpring(jobExplorer.getJobExecution(executionId));
+        org.springframework.batch.core.JobExecution jobExecution = jobExplorer.getJobExecution(executionId);
+        if (jobExecution == null)
+            throw new NoSuchJobExecutionException("Could not find job execution with ID " + executionId);
+        return fromSpring(jobExecution);
 
     }
 

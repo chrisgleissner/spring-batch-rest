@@ -13,8 +13,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.NoSuchJobException;
 
+import javax.batch.operations.NoSuchJobExecutionException;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -69,6 +69,16 @@ public class JobExecutionServiceTest {
     public void jobExecutionsId() {
         JobExecution je = jobExecutionService.jobExecution(je11.getId());
         assertThat(je).isNotNull();
+    }
+
+    @Test(expected = NoSuchJobExecutionException.class)
+    public void jobExecutionsIdNotFound() {
+        jobExecutionService.jobExecution(10);
+    }
+
+    @Test(expected = NoSuchJobExecutionException.class)
+    public void jobExecutionsIdNotFoundNegativeId() {
+        jobExecutionService.jobExecution(-1);
     }
 
     @Test

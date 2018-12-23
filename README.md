@@ -95,7 +95,7 @@ The following REST endpoints are available:
 Where possible, subclasses of the Spring Batch <a href="https://docs.spring.io/spring-batch/trunk/apidocs/org/springframework/batch/core/JobExecutionException.html">JobExecutionException</a>
 are mapped to an appropriate HTTP status code and the response body contains further details. 
 
-For example, trying to start a nonexistent job results in a 404:
+For example, trying to start a nonexistent job results in a response with a 404 status code and the following response body:
 ```
 {
   "status": "404 NOT_FOUND",
@@ -117,14 +117,17 @@ For performance reasons, `/jobExecutions` queries are performed against an in-me
 job executions. If the `limitPerJob` request parameter is larger than the value of this property, the cache is bypassed and the
 Spring Batch <a href="https://docs.spring.io/spring-batch/4.0.x/api/index.html?org/springframework/batch/core/explore/JobExplorer.html">JobExplorer</a> is used instead.
 
-Large `jobExecutionCacheSize` values will create increase heap use, but small values combined with large `limitSize` request parameters
+Large `jobExecutionCacheSize` values will result in increased heap use, but small values combined with large `limitSize` request parameters
 will cause increased REST query latencies. Thus, if you increase this property value, you may also want to increase your heap size. 
 
-### Job Restart
+The cache only contains job executions since the Spring context creation, ie. it is not warmed up from the JobExplorer and the DB this may rely on. If you want to be able to query job executions that were performed earlier, eg. during a prior JVM execution, you may want to disable caching. To do so, simply set the property to 0.
+
+
+### Repeated Job Execution
 
 `com.github.chrisgleissner.springbatchrest.addUniqueJobParameter` (default: true)
 
-Spring Batch prevents mutiple invocations of a job unless you use different properties (aka job parameters) each time. To bypass this, a unique property (ie. a random UUID) is added to each job invocation. 
+Spring Batch prevents repeated invocations of a job unless you use different properties (aka job parameters) each time. To bypass this, a unique property (ie. a random UUID) is added to each job invocation. You can disable this by setting the property to false. 
 
 
 

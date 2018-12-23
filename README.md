@@ -50,19 +50,6 @@ Here's how to run a <a href="https://github.com/chrisgleissner/spring-batch-rest
       "id": 1,
       "jobId": 1,
       "jobName": "personJob",
-      "startTime": "2018-12-23T18:19:13.185",
-      "endTime": "2018-12-23T18:19:13.223",
-      "exitCode": "COMPLETED",
-      "exitDescription": "",
-      "status": "COMPLETED",
-      "exceptions": []
-    },
-    "_links": {
-      "self": {
-        "href": "https://spring-batch-rest.herokuapp.com/jobExecutions/1"
-      }
-    }
-  },
 ...
 ```
 

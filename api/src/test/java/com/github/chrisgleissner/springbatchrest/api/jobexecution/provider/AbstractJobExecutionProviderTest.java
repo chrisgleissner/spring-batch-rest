@@ -23,7 +23,7 @@ public abstract class AbstractJobExecutionProviderTest {
     @Test
     public void worksForEmptyOptionals() {
         Collection<JobExecution> jes = provider().getJobExecutions(Optional.empty(), Optional.empty(), MAX_NUMBER_OF_EXECUTIONS_PER_JOB_NAME);
-        assertThat(jes).containsExactly(je12, je11, je24, je23, je22, je21);
+        assertThat(jes).containsExactly(je24, je23, je22, je21, je12, je11);
     }
 
     @Test

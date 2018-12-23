@@ -3,19 +3,23 @@ package com.github.chrisgleissner.springbatchrest.api.jobexecution.provider;
 import org.springframework.batch.core.JobExecution;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 public interface JobExecutionProvider {
 
     Collection<JobExecution> getJobExecutions(Optional<String> jobNameRegexp,
-                                              Optional<String> exitCode,
-                                              int maxNumberOfExecutionsPerJobName);
+                                        Optional<String> exitCode,
+                                        int limitPerJob);
 
-    default Stream<JobExecution> limit(Stream<JobExecution> s, Optional<String> exitCode, int maxNumberOfExecutionsPerJobName) {
-        return s.filter(e ->  exitCode.map(c -> e.getExitStatus().getExitCode().equals(c)).orElse(true))
-                .sorted((j1, j2) -> -1 * j1.getEndTime().compareTo(j2.getEndTime()))
-                .limit(maxNumberOfExecutionsPerJobName);
-
+    default Comparator<JobExecution> byDescendingTime() {
+        return (j1, j2) -> {
+            int result;
+            if (j1.getEndTime() != null && j2.getEndTime() != null)
+                result = j1.getEndTime().compareTo(j2.getEndTime());
+            else
+                result = j1.getStartTime().compareTo(j2.getStartTime());
+            return result * -1;
+        };
     }
 }

@@ -97,7 +97,7 @@ The default behaviour of the REST API can be tweaked via several Spring properti
 
 ### Job Execution Caching
 
-`com.github.chrisgleissner.springbatchrest.maxNumberOfExecutionsPerJob` (default: 100)
+`com.github.chrisgleissner.springbatchrest.jobExecutionCacheSize` (default: 100)
 
 For performance reasons, `/jobExecutions` queries are performed against an in-memory cache of recent 
 job executions. If the `limitPerJob` request parameter is larger than `100`, this cache is bypassed and the

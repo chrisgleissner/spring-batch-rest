@@ -98,6 +98,6 @@ public class JobExecutionServiceTest {
         Collection<JobExecution> jes =
                 jobExecutionService.jobExecutions(empty(), Optional.of(ExitStatus.COMPLETED.getExitCode()), 1);
         assertThat(jes).hasSize(2);
-        assertThat(jes).extracting(je -> je.getJobName()).containsExactly(JOB_NAME_1, JOB_NAME_2);
+        assertThat(jes).extracting(je -> je.getJobName()).containsExactly(JOB_NAME_2, JOB_NAME_1);
     }
 }

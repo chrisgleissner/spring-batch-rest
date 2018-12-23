@@ -38,11 +38,20 @@ public class JobExecutionController {
             @RequestParam(value = "exitCode", required = false) String exitCode,
             @RequestParam(value = "limitPerJob", defaultValue = "3") Integer limitPerJob) {
         Collection<JobExecutionResource> jobExecutions = jobExecutionService.jobExecutions(
-                Optional.ofNullable(jobName),
-                Optional.ofNullable(exitCode),
+                optional(jobName),
+                optional(exitCode),
                 limitPerJob).stream().map(JobExecutionResource::new).collect(toList());
         return new Resources<>(jobExecutions, linkTo(methodOn(JobExecutionController.class)
                 .all(jobName, exitCode, limitPerJob)).withSelfRel());
+    }
+
+    private Optional<String> optional(String s) {
+        if (s != null) {
+            s = s.trim();
+            if (s.isEmpty())
+                s = null;
+        }
+        return Optional.ofNullable(s);
     }
 
     @ApiOperation("Start a Spring Batch job execution")

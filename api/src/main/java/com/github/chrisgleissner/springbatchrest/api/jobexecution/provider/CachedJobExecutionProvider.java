@@ -15,7 +15,6 @@ import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 import static com.google.common.collect.ImmutableList.copyOf;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Provides information for recent {@link JobExecution}s and is faster than {@link AllJobExecutionProvider} if a large
@@ -42,13 +41,13 @@ public class CachedJobExecutionProvider implements Consumer<JobExecution>, JobEx
             return allJobExecutionProvider.getJobExecutions(jobNameRegexp, exitCode, limitPerJob);
         else {
             log.debug("Getting job executions from cache for jobNameRegexp={}, exitCode={}, limitPerJob={}", jobNameRegexp, exitCode, limitPerJob);
-            Optional<Pattern> maybeJobNamePattern = jobNameRegexp.map(r -> Pattern.compile(r));
-            List<JobExecution> result = jobExecutionsByJobName.entrySet().stream()
+            Optional<Pattern> maybeJobNamePattern = jobNameRegexp.map(Pattern::compile);
+            TreeSet<JobExecution> result = new TreeSet(byDescendingTime());
+            jobExecutionsByJobName.entrySet().stream()
                     .filter(e -> maybeJobNamePattern.map(p -> p.matcher(e.getKey()).matches()).orElse(true))
                     .map(e -> e.getValue())
                     .flatMap(je -> je.getJobExecutions(exitCode).stream().sorted(byDescendingTime()).limit(limitPerJob))
-                    .sorted(byDescendingTime())
-                    .collect(toList());
+                    .forEach(result::add);
             log.debug("Found {} job execution(s) for jobNameRegexp={}, exitCode={}, limitPerJob={}", jobNameRegexp, exitCode, limitPerJob, result.size());
             return result;
         }

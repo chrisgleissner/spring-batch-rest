@@ -12,6 +12,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static org.awaitility.Awaitility.await;
+import static org.awaitility.Duration.ONE_SECOND;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -47,11 +49,11 @@ public class AdHocSchedulerTest {
         scheduler.schedule(JOB_NAME_1, csvImportJobSupplier(JOB_NAME_1, CSV1_FILENAME), CRON_SCHEDULE_TO_TRIGGER_EVERY_SECOND);
         scheduler.schedule(JOB_NAME_2, csvImportJobSupplier(JOB_NAME_2, CSV2_FILENAME), CRON_SCHEDULE_TO_TRIGGER_EVERY_SECOND);
         scheduler.start();
-
         listener.awaitCompletionOfJobs(NUMBER_OF_JOBS * NUMBER_OF_EXECUTIONS_PER_JOB, 5_000);
         scheduler.stop();
 
-        assertThat(writer.getItems().size(), is(NUMBER_OF_EXECUTIONS_PER_JOB * (CSV1_ROWS + CSV2_ROWS)));
+        await().atMost(ONE_SECOND).untilAsserted(() ->
+                assertThat(writer.getItems().size(), is(NUMBER_OF_EXECUTIONS_PER_JOB * (CSV1_ROWS + CSV2_ROWS))));
         assertThat(writer.getItems().iterator().next().getFirstName(), is("JILL"));
     }
 

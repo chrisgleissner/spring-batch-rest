@@ -11,6 +11,15 @@ REST API for Spring Batch, based on Spring MVC and Spring Boot.
 - Start job execution (synchronous or asynchronous) with optional job property overrides. The job properties can
 either be obtained via a custom API or via standard Spring Batch job parameters, accessible from <a href="https://docs.spring.io/spring-batch/trunk/apidocs/org/springframework/batch/core/scope/StepScope.html">step-scoped beans</a>.
 
+## Live Demo
+
+Check out the <a href="https://spring-batch-rest.herokuapp.com/swagger-ui.html">live demo</a> of this project's Swagger UI. This demo is automatically updated whenever the repo's master branch changes.
+
+To start the sample <a href="https://github.com/chrisgleissner/spring-batch-rest/tree/master/example/src/main/java/com/github/chrisgleissner/springbatchrest/example/PersonJobConfig.java">personJob<a> and see it completed, perform the following via this live demo:
+1. Click on `job-execution-controller`, then on `POST`. Now click on `Try it Out` on the right-hand side. Replace the contents of the `Example Value` input field with `{"name": "personJob"}` and press `Execute'. 
+1. The job is now executed and after a few seconds, you should see that it completed in the response body.
+1. Now view your newly completed job in the <a href="https://spring-batch-rest.herokuapp.com/jobExecutions?jobName=personJob&limitPerJob=3">job execution overview<a>.
+
 ## Getting Started
 
 To integrate the REST API in your Spring Boot project, first add a dependency for Maven:
@@ -45,7 +54,7 @@ mvn clean install
 java -jar example/target/*.jar
 ```
 and then check the Swagger REST API docs at 
-<a href="http://localhost:8080/swagger-ui.html">http://localhost:8080/swagger-ui.html</a>. 
+<a href="http://localhost:8080/swagger-ui.html">http://localhost:8080/swagger-ui.html</a>.
 
 
 ## REST Endpoints

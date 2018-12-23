@@ -67,7 +67,7 @@ The following REST endpoints are available:
 | GET          | /jobExecutions/{id}    | Single job execution |
 | POST         | /jobExecutions         | Start job execution with optional property overrides |
 
-##### Request Parameters for GET `/jobExecutions` 
+#### Request Parameters for GET `/jobExecutions` 
 
 | Parameter | Default Value | Description |
 |-----------|---------------|-------------|
@@ -75,7 +75,7 @@ The following REST endpoints are available:
 | exitCode | empty | Exit code of the job execution. Can be `COMPLETED`, `EXECUTING`, `FAILED`, `NOOP`, `STOPPED` or `UNKNOWN` as per <a href="https://docs.spring.io/spring-batch/trunk/apidocs/org/springframework/batch/core/ExitStatus.html">ExitStatus</a>. If absent, all exit codes are used. |
 | limitPerJob | 3 | Maximum number of job executions to return for each job. |
 
-Examples:
+#### Examples
 
 | HTTP Method  | Path                   | Description  |
 |--------------|------------------------|--------------|

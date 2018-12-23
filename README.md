@@ -79,7 +79,7 @@ The following REST endpoints are available:
 
 | HTTP Method  | Path                   | Description  |
 |--------------|------------------------|--------------|
-| GET          | /jobExecutions?limitPerJob=1000  | Latest 1000 executions for each job |
+| GET          | /jobExecutions?limitPerJob=50  | Latest 50 executions for each job |
 | GET          | /jobExecutions?jobName=foo&exitCode=FAILED | Latest 3 failed executions for 'foo' job |
 | GET          | /jobExecutions?jobName=foo.*&exitCode=FAILED&limitPerJob=10 | Latest 10 failed executions for jobs with a name starting with 'foo' |
 
@@ -116,6 +116,9 @@ The default behaviour of the REST API can be tweaked via several Spring properti
 For performance reasons, `/jobExecutions` queries are performed against an in-memory cache of recent 
 job executions. If the `limitPerJob` request parameter is larger than the value of this property, the cache is bypassed and the
 Spring Batch <a href="https://docs.spring.io/spring-batch/4.0.x/api/index.html?org/springframework/batch/core/explore/JobExplorer.html">JobExplorer</a> is used instead.
+
+Large `jobExecutionCacheSize` values will create increase heap use, but small values combined with large `limitSize` request parameters
+will cause increased REST query latencies. Thus, if you increase this property value, you may also want to increase your heap size. 
 
 ### Job Restart
 

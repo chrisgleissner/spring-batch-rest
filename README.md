@@ -17,10 +17,54 @@ The project compiles against both JDK 8 and JDK 11.
 
 Check out the <a href="https://spring-batch-rest.herokuapp.com/swagger-ui.html">live demo</a> of this project's Swagger UI. This demo is automatically updated whenever the repo's master branch changes.
 
-To start the sample <a href="https://github.com/chrisgleissner/spring-batch-rest/tree/master/example/src/main/java/com/github/chrisgleissner/springbatchrest/example/PersonJobConfig.java">personJob<a> and see it completed, perform the following via this live demo:
-1. Click on `Spring Batch Job Executions`, then on `POST`. Now click on `Try it Out` on the right-hand side. Replace the contents of the `Example Value` input field with `{"name": "personJob"}` and press `Execute'. 
-1. The job is now executed and after a few seconds, you should see that it completed in the response body.
-1. Now view your newly completed job in the <a href="https://spring-batch-rest.herokuapp.com/jobExecutions?jobName=personJob&limitPerJob=3">job execution overview<a>.
+To run the sample <a href="https://github.com/chrisgleissner/spring-batch-rest/tree/master/example/src/main/java/com/github/chrisgleissner/springbatchrest/example/PersonJobConfig.java">personJob<a>, perform the following steps in the live demo:
+* Click on `Spring Batch Job Executions`, then on `POST`. Now click on `Try it Out` on the right-hand side. Replace the contents of the `Example Value` input field with `{"name": "personJob"}` and press `Execute`. 
+* The job has now been triggered. When it completes, you'll get a response body similar to:
+```json
+{
+  "jobExecution": {
+    "id": 1,
+    "jobId": 1,
+    "jobName": "personJob",
+    "startTime": "2018-12-23T18:19:13.185",
+    "endTime": "2018-12-23T18:19:13.223",
+    "exitCode": "COMPLETED",
+    "exitDescription": "",
+    "status": "COMPLETED",
+    "exceptions": []
+  },
+  "_links": {
+    "self": {
+      "href": "https://spring-batch-rest.herokuapp.com/jobExecutions/1"
+    }
+  }
+}
+```
+* You can now view this and other recently completed jobs via the <a href="https://spring-batch-rest.herokuapp.com/jobExecutions?jobName=personJob&limitPerJob=3">job execution overview<a>:
+```json
+{
+  "_embedded": {
+  "jobExecutionResourceList": [
+    {
+    "jobExecution": {
+      "id": 1,
+      "jobId": 1,
+      "jobName": "personJob",
+      "startTime": "2018-12-23T18:19:13.185",
+      "endTime": "2018-12-23T18:19:13.223",
+      "exitCode": "COMPLETED",
+      "exitDescription": "",
+      "status": "COMPLETED",
+      "exceptions": []
+    },
+    "_links": {
+      "self": {
+        "href": "https://spring-batch-rest.herokuapp.com/jobExecutions/1"
+      }
+    }
+  },
+...
+```
 
 ## Getting Started
 

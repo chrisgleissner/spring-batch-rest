@@ -123,11 +123,11 @@ will cause increased REST query latencies. Thus, if you increase this property v
 The cache only contains job executions since the Spring context creation, ie. it is not warmed up from the JobExplorer and the DB this may rely on. If you want to be able to query job executions that were performed earlier, eg. during a prior JVM execution, you may want to disable caching. To do so, simply set the property to 0.
 
 
-### Job Restart
+### Repeated Job Execution
 
 `com.github.chrisgleissner.springbatchrest.addUniqueJobParameter` (default: true)
 
-Spring Batch prevents repeated invocations of a job unless you use different properties (aka job parameters) each time. To bypass this, a unique property (ie. a random UUID) is added to each job invocation. 
+Spring Batch prevents repeated invocations of a job unless you use different properties (aka job parameters) each time. To bypass this, a unique property (ie. a random UUID) is added to each job invocation. You can disable this by setting the property to false. 
 
 
 

@@ -15,9 +15,9 @@ The project compiles against both JDK 8 and JDK 11.
 
 ## Live Demo
 
-Check out the <a href="https://spring-batch-rest.herokuapp.com/swagger-ui.html">live demo</a> of this project's Swagger UI. This demo is automatically updated whenever the repo's master branch changes.
-
-To run the sample <a href="https://github.com/chrisgleissner/spring-batch-rest/tree/master/example/src/main/java/com/github/chrisgleissner/springbatchrest/example/PersonJobConfig.java">personJob<a>, perform the following steps in the live demo:
+Check out the <a href="https://spring-batch-rest.herokuapp.com/swagger-ui.html">live demo</a> of this project's Swagger UI. 
+This demo is automatically updated whenever the repo's master branch changes. 
+To run a <a href="https://github.com/chrisgleissner/spring-batch-rest/tree/master/example/src/main/java/com/github/chrisgleissner/springbatchrest/example/PersonJobConfig.java">sample job<a>, do the following:
 * Click on `Spring Batch Job Executions`, then on `POST`. Now click on `Try it Out` on the right-hand side. Replace the contents of the `Example Value` input field with `{"name": "personJob"}` and press `Execute`. 
 * The job has now been triggered. When it completes, you'll get a response body similar to:
 ```json

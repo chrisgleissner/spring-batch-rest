@@ -120,7 +120,7 @@ Spring Batch <a href="https://docs.spring.io/spring-batch/4.0.x/api/index.html?o
 Large `jobExecutionCacheSize` values will create increase heap use, but small values combined with large `limitSize` request parameters
 will cause increased REST query latencies. Thus, if you increase this property value, you may also want to increase your heap size. 
 
-The cache only contains job executions since the Spring context création. If you want to be able to query job executions that were performed earlier, eg. during a prior JVM execution, you will want to disable caching. To do so, simply set the property to 0.
+The cache only contains job executions since the Spring context création, ie. it is not warmed up from the JobExplorer and the DB this may rely on. If you want to be able to query job executions that were performed earlier, eg. during a prior JVM execution, you may want to disable caching. To do so, simply set the property to 0.
 
 
 ### Job Restart

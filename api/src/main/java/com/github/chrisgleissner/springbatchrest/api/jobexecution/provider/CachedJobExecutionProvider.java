@@ -14,6 +14,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
+import static com.google.common.collect.ImmutableList.copyOf;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -61,7 +62,7 @@ public class CachedJobExecutionProvider implements Consumer<JobExecution>, JobEx
         Collection<JobExecution> getJobExecutions(Optional<String> exitCode) {
             lock.readLock().lock();
             try {
-                return exitCode.isPresent() ? jobExecutionsByExitCode.get(exitCode.get()) : jobExecutions;
+                return copyOf(exitCode.isPresent() ? jobExecutionsByExitCode.get(exitCode.get()) : this.jobExecutions);
             } finally {
                 lock.readLock().unlock();
             }

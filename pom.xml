@@ -11,7 +11,7 @@
 
     <groupId>com.github.chrisgleissner</groupId>
     <artifactId>spring-batch-rest</artifactId>
-    <version>1.2.7-SNAPSHOT</version>
+    <version>1.2.7</version>
     <packaging>pom</packaging>
 
     <name>spring-batch-rest</name>
@@ -92,7 +92,7 @@
         <url>https://github.com/chrisgleissner/spring-batch-rest</url>
         <connection>scm:git:git://github.com/chrisgleissner/spring-batch-rest.git</connection>
         <developerConnection>scm:git:git@github.com:chrisgleissner/spring-batch-rest.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>v1.2.7</tag>
     </scm>
 
     <profiles>

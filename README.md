@@ -20,7 +20,7 @@ This demo is automatically updated whenever the repo's master branch changes.
 Here's how to run a <a href="https://github.com/chrisgleissner/spring-batch-rest/tree/master/example/src/main/java/com/github/chrisgleissner/springbatchrest/example/PersonJobConfig.java">sample job<a>:
 * Click on `Spring Batch Job Executions`, then on `POST`. Now click on `Try it Out` on the right-hand side. Replace the contents of the `Example Value` input field with `{"name": "personJob"}` and press `Execute`. 
 * The job has now been triggered. When it completes, you'll get a response body similar to:
-```json
+```
 {
   "jobExecution": {
     "id": 1,
@@ -41,7 +41,7 @@ Here's how to run a <a href="https://github.com/chrisgleissner/spring-batch-rest
 }
 ```
 * You can now view this and other recently completed jobs via the <a href="https://spring-batch-rest.herokuapp.com/jobExecutions?jobName=personJob&limitPerJob=3">job execution overview<a>:
-```json
+```
 {
   "_embedded": {
   "jobExecutionResourceList": [

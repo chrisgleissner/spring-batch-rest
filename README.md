@@ -127,7 +127,7 @@ The cache only contains job executions since the Spring context creation, ie. it
 
 `com.github.chrisgleissner.springbatchrest.addUniqueJobParameter` (default: true)
 
-Spring Batch prevents mutiple invocations of a job unless you use different properties (aka job parameters) each time. To bypass this, a unique property (ie. a random UUID) is added to each job invocation. 
+Spring Batch prevents repeated invocations of a job unless you use different properties (aka job parameters) each time. To bypass this, a unique property (ie. a random UUID) is added to each job invocation. 
 
 
 

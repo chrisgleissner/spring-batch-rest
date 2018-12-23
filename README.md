@@ -95,7 +95,7 @@ The following REST endpoints are available:
 Where possible, subclasses of the Spring Batch <a href="https://docs.spring.io/spring-batch/trunk/apidocs/org/springframework/batch/core/JobExecutionException.html">JobExecutionException</a>
 are mapped to an appropriate HTTP status code and the response body contains further details. 
 
-For example, trying to start a nonexistent job results in a 404:
+For example, trying to start a nonexistent job results in a response with 404 status code and the following response body:
 ```
 {
   "status": "404 NOT_FOUND",

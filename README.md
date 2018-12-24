@@ -11,7 +11,7 @@ REST API for <a href="https://spring.io/projects/spring-batch">Spring Batch</a>,
 - Start job execution (synchronous or asynchronous) with optional job property overrides. The job properties can
 either be obtained via a custom API or via standard Spring Batch job parameters, accessible from <a href="https://docs.spring.io/spring-batch/trunk/apidocs/org/springframework/batch/core/scope/StepScope.html">step-scoped beans</a>.
 
-The project compiles against both JDK 8 and JDK 11.
+
 
 ## Live Demo
 

@@ -15,8 +15,8 @@ either be obtained via a custom API or via standard Spring Batch job parameters,
 
 ## Live Demo
 
-Check out the <a href="https://spring-batch-rest.herokuapp.com/swagger-ui.html">live demo</a> of this project's Swagger UI. 
-This demo is automatically updated whenever the repo's master branch changes. 
+Check out the <a href="https://spring-batch-rest.herokuapp.com/swagger-ui.html">live demo</a> of this project's Swagger UI. This demo is automatically updated whenever the repo's master branch changes. Please note that it may take up to 30s for this Heroku app to perform a cold start after it has not been used for a while.
+
 Here's how to run a <a href="https://github.com/chrisgleissner/spring-batch-rest/tree/master/example/src/main/java/com/github/chrisgleissner/springbatchrest/example/PersonJobConfig.java">sample job<a>:
 * Click on `Spring Batch Job Executions`, then on `POST`. Now click on `Try it Out` on the right-hand side. Replace the contents of the `Example Value` input field with `{"name": "personJob"}` and press `Execute`. 
 * The job has now been triggered. When it completes, you'll get a response body similar to:

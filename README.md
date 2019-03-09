@@ -4,6 +4,7 @@
 [![Maven Central](https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/com/github/chrisgleissner/spring-batch-rest-api/maven-metadata.xml.svg)](https://search.maven.org/artifact/com.github.chrisgleissner/spring-batch-rest-api)
 [![Coverage Status](https://coveralls.io/repos/github/chrisgleissner/spring-batch-rest/badge.svg?branch=master)](https://coveralls.io/github/chrisgleissner/spring-batch-rest?branch=master)
 [![Javadocs](https://www.javadoc.io/badge/com.github.chrisgleissner/spring-batch-rest-api.svg)](https://www.javadoc.io/doc/com.github.chrisgleissner/spring-batch-rest-api)
+[![Maintainability](https://api.codeclimate.com/v1/badges/cbf76afcf96f6596583e/maintainability)](https://codeclimate.com/github/chrisgleissner/behaim/maintainability)
 
 REST API for <a href="https://spring.io/projects/spring-batch">Spring Batch</a>, based on Spring MVC and Spring Boot 2.
 

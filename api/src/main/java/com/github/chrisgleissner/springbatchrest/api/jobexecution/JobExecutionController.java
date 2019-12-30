@@ -5,7 +5,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +14,8 @@ import java.util.Collection;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Api(tags = "Spring Batch Job Executions")
 @RestController
@@ -33,7 +33,7 @@ public class JobExecutionController {
 
     @ApiOperation("Find Spring batch job executions by job name and exit code")
     @GetMapping
-    public Resources<JobExecutionResource> all(
+    public CollectionModel<JobExecutionResource> all(
             @RequestParam(value = "jobName", required = false) String jobName,
             @RequestParam(value = "exitCode", required = false) String exitCode,
             @RequestParam(value = "limitPerJob", defaultValue = "3") Integer limitPerJob) {
@@ -41,7 +41,7 @@ public class JobExecutionController {
                 optional(jobName),
                 optional(exitCode),
                 limitPerJob).stream().map(JobExecutionResource::new).collect(toList());
-        return new Resources<>(jobExecutions, linkTo(methodOn(JobExecutionController.class)
+        return new CollectionModel<>(jobExecutions, linkTo(methodOn(JobExecutionController.class)
                 .all(jobName, exitCode, limitPerJob)).withSelfRel());
     }
 

@@ -18,7 +18,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.197</version>
+            <version>1.4.200</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -46,7 +46,7 @@
         <dependency>
             <groupId>org.springframework.batch</groupId>
             <artifactId>spring-batch-test</artifactId>
-            <version>4.0.1.RELEASE</version>
+            <version>4.2.1.RELEASE</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

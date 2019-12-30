@@ -1,11 +1,11 @@
 package com.github.chrisgleissner.springbatchrest.api.job;
 
-import org.springframework.hateoas.ResourceSupport;
+import org.springframework.hateoas.RepresentationModel;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-public class JobResource extends ResourceSupport {
+public class JobResource extends RepresentationModel<JobResource> {
     private Job job;
 
     // For Jackson

@@ -3,14 +3,14 @@ package com.github.chrisgleissner.springbatchrest.api.jobdetail;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Resources;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Api(tags = "Quartz Job Details")
 @RestController
@@ -28,10 +28,10 @@ public class JobDetailController {
 
     @ApiOperation("Get all Quartz job details")
     @GetMapping
-    public Resources<JobDetailResource> all(@RequestParam(value = "enabled", required = false) Boolean enabled,
+    public CollectionModel<JobDetailResource> all(@RequestParam(value = "enabled", required = false) Boolean enabled,
                                             @RequestParam(value = "springBatchJobName", required = false) String springBatchJobName) {
-        return new Resources<>(jobDetailService.all(Optional.ofNullable(enabled), Optional.ofNullable(springBatchJobName)).stream()
+        return new CollectionModel<>(jobDetailService.all(Optional.ofNullable(enabled), Optional.ofNullable(springBatchJobName)).stream()
                 .map(JobDetailResource::new).collect(toList()),
-                ControllerLinkBuilder.linkTo(methodOn(JobDetailController.class).all(enabled, springBatchJobName)).withSelfRel());
+                WebMvcLinkBuilder.linkTo(methodOn(JobDetailController.class).all(enabled, springBatchJobName)).withSelfRel());
     }
 }

@@ -4,7 +4,9 @@ import com.github.chrisgleissner.springbatchrest.util.adhoc.property.JobExecutio
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.springframework.batch.core.JobExecution;
 
+import java.util.Collection;
 import java.util.Optional;
 
 import static com.github.chrisgleissner.springbatchrest.api.Fixtures.*;
@@ -17,6 +19,7 @@ import static org.springframework.batch.core.ExitStatus.COMPLETED;
 public class CachedJobExecutionProviderTest extends AbstractJobExecutionProviderTest {
 
     private static final int MAX_CACHED_RESULTS_PER_JOB_NAME = 10;
+    public static final String FAILED = "FAILED";
 
     @Mock
     private JobExecutionAspect executionAspect;
@@ -30,25 +33,22 @@ public class CachedJobExecutionProviderTest extends AbstractJobExecutionProvider
         configureForJobExecutionsService(provider);
 
         assertExecutions(JOB_NAME_1, 2);
-        assertExecutions(JOB_NAME_1, "FAILED", 1);
+        assertExecutions(JOB_NAME_1, FAILED, 1);
 
         assertExecutions(JOB_NAME_2, 4);
-        assertExecutions(JOB_NAME_2, "FAILED", 2);
+        assertExecutions(JOB_NAME_2, FAILED, 2);
     }
 
     private void assertExecutions(String jobName, String exitCode, int expectedSize) {
-        assertThat(provider).extracting("jobExecutionsByJobName")
-                .extracting(jobName)
-                .extracting("jobExecutionsByExitCode")
-                .flatExtracting(exitCode)
-                .hasSize(expectedSize);
+        assertThat(getJobExecutions(jobName, Optional.of(exitCode))).hasSize(expectedSize);
+    }
+
+    private Collection<JobExecution> getJobExecutions(String jobName, Optional<String> exitCode) {
+        return provider.getJobExecutionsByJobName().get(jobName).getJobExecutions(exitCode);
     }
 
     private void assertExecutions(String jobName, int expectedSize) {
-        assertThat(provider).extracting("jobExecutionsByJobName")
-                .extracting(jobName)
-                .flatExtracting("jobExecutions")
-                .hasSize(expectedSize);
+        assertThat(getJobExecutions(jobName, Optional.empty())).hasSize(expectedSize);
     }
 
     @Test

@@ -53,9 +53,9 @@ public class JobExecution implements Comparable<JobExecution> {
     public int compareTo(JobExecution o) {
         int result = this.getJobName() != null ? this.getJobName().compareToIgnoreCase(o.getJobName()) : 0;
         if (result == 0)
-            result = id > o.id ? 1 : (id < o.id ? -1 : 0);
+            result = Long.compare(id, o.id);
         if (result == 0)
-            result = jobId > o.jobId ? 1 : (jobId < o.jobId ? -1 : 0);
+            result = Long.compare(jobId, o.jobId);
         return result;
     }
 

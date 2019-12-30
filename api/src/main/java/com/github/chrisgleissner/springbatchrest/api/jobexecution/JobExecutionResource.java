@@ -1,12 +1,12 @@
 package com.github.chrisgleissner.springbatchrest.api.jobexecution;
 
-import org.springframework.hateoas.ResourceSupport;
+import org.springframework.hateoas.RepresentationModel;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 
-public class JobExecutionResource extends ResourceSupport {
+public class JobExecutionResource extends RepresentationModel<JobExecutionResource> {
     private JobExecution jobExecution;
 
     // For Jackson

@@ -114,8 +114,8 @@ public class ServerTest {
 
     @Test
     public void swagger() {
-        assertThat(restTemplate.getForObject(url("v2/api-docs"), String.class))
-                .contains("{\"swagger\":\"2.0\"");
+        assertThat(restTemplate.getForObject(url("v3/api-docs"), String.class))
+                .contains("\"openapi\":\"3.0.1\"");
     }
 
     private JobExecution startJob(String propertyValue) {

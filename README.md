@@ -6,14 +6,12 @@
 [![Coverage Status](https://coveralls.io/repos/github/chrisgleissner/spring-batch-rest/badge.svg?branch=master)](https://coveralls.io/github/chrisgleissner/spring-batch-rest?branch=master)
 [![Maintainability](https://api.codeclimate.com/v1/badges/2267ddd7cbbfc5e22b86/maintainability)](https://codeclimate.com/github/chrisgleissner/spring-batch-rest/maintainability)
 
-REST API for <a href="https://spring.io/projects/spring-batch">Spring Batch</a>, based on Spring Boot 2.2 and JDK 11.
+REST API for <a href="https://spring.io/projects/spring-batch">Spring Batch</a> based on <a href="https://github.com/spring-projects/spring-boot">Spring Boot 2.2</a> and <a href="https://github.com/spring-projects/spring-hateoas">Spring HATOEAS</a>. It comes with an OpenAPI 3 documentation provided by <a href="https://github.com/springdoc/springdoc-openapi">Springdoc</a>.
 
 ## Features
 - Get information on jobs, job executions, and Quartz schedules
 - Start job execution (synchronous or asynchronous) with optional job property overrides. The job properties can
 either be obtained via a custom API or via standard Spring Batch job parameters, accessible from <a href="https://docs.spring.io/spring-batch/trunk/apidocs/org/springframework/batch/core/scope/StepScope.html">step-scoped beans</a>.
-
-
 
 ## Live Demo
 

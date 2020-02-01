@@ -63,13 +63,13 @@ To integrate the REST API in your Spring Boot project, first add a dependency fo
 <dependency>
     <groupId>com.github.chrisgleissner</groupId>
     <artifactId>spring-batch-rest-api</artifactId>
-    <version>1.2.7</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 
 or Gradle:
 ```
-implementation 'com.github.chrisgleissner:spring-batch-rest-api:1.2.7'
+implementation 'com.github.chrisgleissner:spring-batch-rest-api:1.3.0'
 ```
 
 Then add `@EnableSpringBatchRest` to your Spring Boot application class, for <a href="https://github.com/chrisgleissner/spring-batch-rest/blob/master/example/src/main/java/com/github/chrisgleissner/springbatchrest/example/SpringBatchRestSampleApplication.java">example</a>:

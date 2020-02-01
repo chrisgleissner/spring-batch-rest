@@ -34,6 +34,6 @@ public class JobDetailController {
                                             @RequestParam(value = "springBatchJobName", required = false) String springBatchJobName) {
         return new CollectionModel<>(jobDetailService.all(Optional.ofNullable(enabled), Optional.ofNullable(springBatchJobName)).stream()
                 .map(JobDetailResource::new).collect(toList()),
-                WebMvcLinkBuilder.linkTo(methodOn(JobDetailController.class).all(enabled, springBatchJobName)).withSelfRel());
+                WebMvcLinkBuilder.linkTo(methodOn(JobDetailController.class).all(enabled, springBatchJobName)).withSelfRel().expand());
     }
 }

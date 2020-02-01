@@ -46,7 +46,7 @@ public class JobExecutionController {
                 optional(exitCode),
                 limitPerJob).stream().map(JobExecutionResource::new).collect(toList());
         return new CollectionModel<>(jobExecutions, linkTo(methodOn(JobExecutionController.class)
-                .all(jobName, exitCode, limitPerJob)).withSelfRel());
+                .all(jobName, exitCode, limitPerJob)).withSelfRel().expand());
     }
 
     private Optional<String> optional(String s) {

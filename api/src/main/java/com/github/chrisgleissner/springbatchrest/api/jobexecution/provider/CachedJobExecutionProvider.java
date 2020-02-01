@@ -1,6 +1,7 @@
 package com.github.chrisgleissner.springbatchrest.api.jobexecution.provider;
 
 import com.github.chrisgleissner.springbatchrest.util.adhoc.property.JobExecutionAspect;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.EvictingQueue;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobExecution;
@@ -35,6 +36,11 @@ public class CachedJobExecutionProvider implements Consumer<JobExecution>, JobEx
         this.cacheSize = jobExecutionCacheSize;
     }
 
+    @VisibleForTesting
+    Map<String, JobExecutions> getJobExecutionsByJobName() {
+        return jobExecutionsByJobName;
+    }
+
     @Override
     public Collection<JobExecution> getJobExecutions(Optional<String> jobNameRegexp, Optional<String> exitCode, int limitPerJob) {
         if (limitPerJob > this.cacheSize)
@@ -45,7 +51,7 @@ public class CachedJobExecutionProvider implements Consumer<JobExecution>, JobEx
             TreeSet<JobExecution> result = new TreeSet(byDescendingTime());
             jobExecutionsByJobName.entrySet().stream()
                     .filter(e -> maybeJobNamePattern.map(p -> p.matcher(e.getKey()).matches()).orElse(true))
-                    .map(e -> e.getValue())
+                    .map(Map.Entry::getValue)
                     .flatMap(je -> je.getJobExecutions(exitCode).stream().sorted(byDescendingTime()).limit(limitPerJob))
                     .forEach(result::add);
             log.debug("Found {} job execution(s) for jobNameRegexp={}, exitCode={}, limitPerJob={}", jobNameRegexp, exitCode, limitPerJob, result.size());
@@ -53,7 +59,7 @@ public class CachedJobExecutionProvider implements Consumer<JobExecution>, JobEx
         }
     }
 
-    private class JobExecutions {
+    class JobExecutions {
         private final Map<String, Queue<JobExecution>> jobExecutionsByExitCode = new HashMap<>();
         private final Queue<JobExecution> jobExecutions = EvictingQueue.create(cacheSize);
         private final ReadWriteLock lock = new ReentrantReadWriteLock();

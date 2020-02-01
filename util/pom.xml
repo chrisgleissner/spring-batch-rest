@@ -9,7 +9,6 @@
         <version>1.2.8-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.github.chrisgleissner</groupId>
     <artifactId>spring-batch-rest-util</artifactId>
     <version>1.2.8-SNAPSHOT</version>
     <name>spring-batch-rest-util</name>
@@ -18,7 +17,6 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.197</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -46,7 +44,6 @@
         <dependency>
             <groupId>org.springframework.batch</groupId>
             <artifactId>spring-batch-test</artifactId>
-            <version>4.0.1.RELEASE</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -54,7 +51,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
                     <execution>

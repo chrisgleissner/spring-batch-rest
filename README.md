@@ -6,7 +6,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/chrisgleissner/spring-batch-rest/badge.svg?branch=master)](https://coveralls.io/github/chrisgleissner/spring-batch-rest?branch=master)
 [![Maintainability](https://api.codeclimate.com/v1/badges/2267ddd7cbbfc5e22b86/maintainability)](https://codeclimate.com/github/chrisgleissner/spring-batch-rest/maintainability)
 
-REST API for <a href="https://spring.io/projects/spring-batch">Spring Batch</a>, based on Spring MVC and Spring Boot 2.
+REST API for <a href="https://spring.io/projects/spring-batch">Spring Batch</a>, based on Spring Boot 2.2 and JDK 11.
 
 ## Features
 - Get information on jobs, job executions, and Quartz schedules

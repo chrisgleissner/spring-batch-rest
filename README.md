@@ -85,8 +85,7 @@ public class SpringBatchRestSampleApplication {
 
 To see this example in action, run
 ```text
-mvn clean install
-java -jar example/target/*.jar
+mvn install -Dmaven.test.skip; java -jar example/target/*.jar
 ```
 and then check the Swagger REST API docs at 
 <a href="http://localhost:8080/swagger-ui.html">http://localhost:8080/swagger-ui.html</a>.

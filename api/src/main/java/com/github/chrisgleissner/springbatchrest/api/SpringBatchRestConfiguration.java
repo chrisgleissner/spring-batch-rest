@@ -30,8 +30,8 @@ public class SpringBatchRestConfiguration {
                 .info(new Info()
                         .title("Spring Batch REST")
                         .version(buildProperties == null ? null : String.format("%s  -  Build time %s", buildProperties.getVersion(), buildProperties.getTime()))
-                        .description("REST API for controlling and viewing <a href=\\\"https://spring.io/projects/spring-batch\\\">" +
-                                "Spring Batch</a> jobs and their <a href=\\\"http://www.quartz-scheduler.org\\\">Quartz</a> schedules.")
+                        .description("REST API for controlling and viewing <a href=\"https://spring.io/projects/spring-batch\">" +
+                                "Spring Batch</a> jobs and their <a href=\"http://www.quartz-scheduler.org\">Quartz</a> schedules.")
                         .license(new License().name("Apache License 2.0").url("http://github.com/chrisgleissner/spring-batch-rest/blob/master/LICENSE")));
     }
 }

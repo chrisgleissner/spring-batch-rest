@@ -6,11 +6,11 @@
     <parent>
         <groupId>com.github.chrisgleissner</groupId>
         <artifactId>spring-batch-rest</artifactId>
-        <version>1.4.0-SNAPSHOT</version>
+        <version>1.4.0</version>
     </parent>
 
     <artifactId>spring-batch-rest-example</artifactId>
-    <version>1.4.0-SNAPSHOT</version>
+    <version>1.4.0</version>
     <name>spring-batch-rest-example</name>
     <packaging>pom</packaging>
 

@@ -1,6 +1,6 @@
 # spring-batch-rest
 
-[![Maven Central](https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/com/github/chrisgleissner/spring-batch-rest-api/maven-metadata.xml.svg)](https://search.maven.org/artifact/com.github.chrisgleissner/spring-batch-rest-api)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com/github/chrisgleissner/spring-batch-rest-api/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com/github/chrisgleissner/spring-batch-rest-api)
 [![Javadocs](https://www.javadoc.io/badge/com.github.chrisgleissner/spring-batch-rest-api.svg)](https://www.javadoc.io/doc/com.github.chrisgleissner/spring-batch-rest-api)
 [![Build Status](https://travis-ci.org/chrisgleissner/spring-batch-rest.svg?branch=master)](https://travis-ci.org/chrisgleissner/spring-batch-rest)
 [![Coverage Status](https://coveralls.io/repos/github/chrisgleissner/spring-batch-rest/badge.svg?branch=master)](https://coveralls.io/github/chrisgleissner/spring-batch-rest?branch=master)

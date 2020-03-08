@@ -1,11 +1,9 @@
 language: java
-
+install: true
 cache:
   directories:
   - $HOME/.m2
-
 jdk:
 - openjdk11
-
 script:
 - mvn clean install -Pjacoco coveralls:report

@@ -14,6 +14,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 
 import javax.batch.operations.BatchRuntimeException;
+import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -55,7 +56,7 @@ public class AdHocStarter {
             jobPropertyResolvers.started(jobConfig);
 
             Map<String, JobParameter> params = Optional.ofNullable(jobConfig.getProperties()).orElse(emptyMap()).entrySet().stream()
-                    .collect(toMap(e -> e.getKey(), e -> new JobParameter(e.getValue())));
+                    .collect(toMap(Map.Entry::getKey, e -> createJobParameter(e.getValue())));
             if (addUniqueJobParameter)
                 params.put("uuid", new JobParameter(UUID.randomUUID().toString()));
             JobParameters jobParameters = new JobParameters(params);
@@ -70,5 +71,16 @@ public class AdHocStarter {
             throw new RuntimeException(format("Failed to start job '%s' with %s. Reason: %s",
                     jobConfig.getName(), jobConfig, e.getMessage()), e);
         }
+    }
+
+    private JobParameter createJobParameter(Object value) {
+        if (value instanceof Date)
+            return new JobParameter((Date) value);
+        else if (value instanceof Long)
+            return new JobParameter((Long) value);
+        else if (value instanceof Double)
+            return new JobParameter((Double) value);
+        else
+            return new JobParameter("" + value);
     }
 }

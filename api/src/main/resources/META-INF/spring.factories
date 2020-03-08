@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.github.chrisgleissner.springbatchrest.api.core.SpringBatchRestCoreAutoConfiguration

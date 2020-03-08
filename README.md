@@ -159,7 +159,7 @@ The following REST endpoints are available:
 
 ### Quartz Schedules
 
-As mentioned above, these endpoints are only exposed if you're using the `spring-batch-rest-api-quartz` dependency:
+As mentioned above, these endpoints are only exposed if you're using the `spring-batch-rest-quartz-api` dependency:
 
 | HTTP Method  | Path                   | Description  |
 |--------------|------------------------|--------------|

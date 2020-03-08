@@ -68,54 +68,54 @@ public class SpringBootApp {
  
 Then, simply add one of the following two dependencies to your project:
 
-### Core
+### Core API
 
-The `spring-batch-rest-api-core` dependency comes with `jobs` and `jobExecutions` REST endpoints. It is recommended if you
+The `spring-batch-rest-api` dependency comes with `jobs` and `jobExecutions` REST endpoints. It is recommended if you
 don't require Quartz for scheduling your jobs.
 
 Maven:
 ```xml
 <dependency>
     <groupId>com.github.chrisgleissner</groupId>
-    <artifactId>spring-batch-rest-api-core</artifactId>
+    <artifactId>spring-batch-rest-api</artifactId>
     <version>VERSION</version>
 </dependency>
 ```
 
 Gradle:
 ```
-implementation 'com.github.chrisgleissner:spring-batch-rest-api-core:VERSION'
+implementation 'com.github.chrisgleissner:spring-batch-rest-api:VERSION'
 ```
 
-### Quartz
+### Quartz API
 
-The `spring-batch-rest-api-quartz` dependency includes everything above and and additionally exposes Quartz schedules 
+The `spring-batch-rest-quartz-api` dependency includes everything above and and additionally exposes Quartz schedules 
 via the `jobDetails` REST endpoint.
 
 Maven:
 ```xml
 <dependency>
     <groupId>com.github.chrisgleissner</groupId>
-    <artifactId>spring-batch-rest-api-quartz</artifactId>
+    <artifactId>spring-batch-rest-quartz-api</artifactId>
     <version>VERSION</version>
 </dependency>
 ```
 
 Gradle:
 ```
-implementation 'com.github.chrisgleissner:spring-batch-rest-api-quartz:VERSION'
+implementation 'com.github.chrisgleissner:spring-batch-rest-quartz-api:VERSION'
 ```
 
 ### See it in Action
 
-To see `spring-batch-rest-api-core` in action, run
+To see `spring-batch-rest-api` in action, run
 ```text
-mvn install -Dmaven.test.skip; java -jar example/core/target/*.jar
+mvn install -Dmaven.test.skip; java -jar example/api/target/*.jar
 ```
 
-For `spring-batch-rest-api-quartz`, run
+For `spring-batch-rest-quartz-api`, run
 ```text
-mvn install -Dmaven.test.skip; java -jar example/quartz/target/*.jar
+mvn install -Dmaven.test.skip; java -jar example/quartz-api/target/*.jar
 ```
  
 Once it's up, check the Swagger REST API docs at 

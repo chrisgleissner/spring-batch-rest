@@ -15,7 +15,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>core</module>
-        <module>quartz</module>
+        <module>api</module>
+        <module>quartz-api</module>
     </modules>
 </project>

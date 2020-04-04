@@ -8,6 +8,8 @@
 
 REST API for <a href="https://spring.io/projects/spring-batch">Spring Batch</a> based on <a href="https://github.com/spring-projects/spring-boot">Spring Boot 2.2</a> and <a href="https://github.com/spring-projects/spring-hateoas">Spring HATOEAS</a>. It comes with an OpenAPI 3 documentation provided by <a href="https://github.com/springdoc/springdoc-openapi">Springdoc</a>.
 
+Supports Java versions 8 and 11.
+
 ## Features
 - Get information on jobs, job executions, and Quartz schedules
 - Start job execution (synchronous or asynchronous) with optional job property overrides. The job properties can
@@ -78,13 +80,13 @@ Maven:
 <dependency>
     <groupId>com.github.chrisgleissner</groupId>
     <artifactId>spring-batch-rest-api</artifactId>
-    <version>VERSION</version>
+    <version>1.4.1</version>
 </dependency>
 ```
 
 Gradle:
 ```
-implementation 'com.github.chrisgleissner:spring-batch-rest-api:VERSION'
+implementation 'com.github.chrisgleissner:spring-batch-rest-api:1.4.1'
 ```
 
 ### Quartz API
@@ -97,13 +99,13 @@ Maven:
 <dependency>
     <groupId>com.github.chrisgleissner</groupId>
     <artifactId>spring-batch-rest-quartz-api</artifactId>
-    <version>VERSION</version>
+    <version>1.4.1</version>
 </dependency>
 ```
 
 Gradle:
 ```
-implementation 'com.github.chrisgleissner:spring-batch-rest-quartz-api:VERSION'
+implementation 'com.github.chrisgleissner:spring-batch-rest-quartz-api:1.4.1'
 ```
 
 ### See it in Action

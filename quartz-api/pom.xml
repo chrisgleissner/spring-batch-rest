@@ -6,11 +6,11 @@
     <parent>
         <groupId>com.github.chrisgleissner</groupId>
         <artifactId>spring-batch-rest</artifactId>
-        <version>1.4.1-SNAPSHOT</version>
+        <version>1.4.1</version>
     </parent>
 
     <artifactId>spring-batch-rest-quartz-api</artifactId>
-    <version>1.4.1-SNAPSHOT</version>
+    <version>1.4.1</version>
     <name>spring-batch-rest-quartz-api</name>
 
     <dependencies>

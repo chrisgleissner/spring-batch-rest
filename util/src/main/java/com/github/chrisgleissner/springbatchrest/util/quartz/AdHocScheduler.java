@@ -16,6 +16,10 @@ import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
 
+import java.util.TimeZone;
+
+import org.quartz.CronScheduleBuilder;
+
 /**
  * Allows to schedule Spring Batch jobs via Quartz by using a {@link #schedule(String, Job, String)} method
  * rather than Spring wiring each job. This allows for programmatic creation of multiple jobs at run-time.
@@ -37,11 +41,18 @@ public class AdHocScheduler {
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
     }
-
+    
     /**
      * Schedules a Spring Batch job via a Quartz cron expression.
      */
     public synchronized Job schedule(String jobName, Job job, String cronExpression) {
+    	return this.schedule(jobName, job, cronExpression, "UTC");
+    }
+
+    /**
+     * Schedules a Spring Batch job via a Quartz cron expression.
+     */
+    public synchronized Job schedule(String jobName, Job job, String cronExpression, String timeZone) {
         log.debug("Scheduling job {} with CRON expression {}", jobName, cronExpression);
         try {
             jobBuilder.registerJob(job);
@@ -52,7 +63,9 @@ public class AdHocScheduler {
 
             Trigger trigger = newTrigger()
                     .withIdentity(jobName + "-trigger", GROUP_NAME)
-                    .withSchedule(cronSchedule(cronExpression))
+                    .withSchedule(CronScheduleBuilder
+                            .cronSchedule(cronExpression)
+                            .inTimeZone(TimeZone.getTimeZone(timeZone)))
                     .forJob(jobName, GROUP_NAME)
                     .build();
 

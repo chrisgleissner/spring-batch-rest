@@ -2,6 +2,8 @@ package com.github.chrisgleissner.springbatchrest.api.core;
 
 import com.github.chrisgleissner.springbatchrest.api.core.jobexecution.provider.CachedJobExecutionProvider;
 import com.github.chrisgleissner.springbatchrest.util.core.AdHocStarter;
+import com.github.chrisgleissner.springbatchrest.util.core.JobConfig;
+
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
@@ -50,7 +52,7 @@ public class Fixtures {
 
     public static void configureMock(AdHocStarter adHocStarter) {
         reset(adHocStarter);
-        when(adHocStarter.start(any())).thenReturn(jobExecution(1, ji11, ExitStatus.EXECUTING));
+        when(adHocStarter.start(isA(JobConfig.class))).thenReturn(jobExecution(1, ji11, ExitStatus.EXECUTING));
     }
 
     public static void configureForJobExecutionsService(JobExplorer jobExplorer) {

@@ -272,6 +272,6 @@ adHocScheduler.schedule("jobName", job, "0/30 * * * * ?");
 [AdHocStarter](https://github.com/chrisgleissner/spring-batch-rest/blob/master/util/src/main/java/com/github/chrisgleissner/springbatchrest/util/core/AdHocStarter.java) is similar to AdHocScheduler, but used for immediately starting a job:
 
 ```java
-adHocStarter.start("jobName", job);
+adHocStarter.start(job);
 
 ```

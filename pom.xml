@@ -11,7 +11,7 @@
 
     <groupId>com.github.chrisgleissner</groupId>
     <artifactId>spring-batch-rest</artifactId>
-    <version>1.4.3-SNAPSHOT</version>
+    <version>1.4.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>spring-batch-rest</name>

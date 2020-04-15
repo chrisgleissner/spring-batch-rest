@@ -1,10 +1,13 @@
 package com.github.chrisgleissner.springbatchrest.util.core;
 
+import com.github.chrisgleissner.springbatchrest.util.core.JobConfig.JobConfigBuilder;
 import com.github.chrisgleissner.springbatchrest.util.core.property.JobPropertyResolvers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.JobLocator;
+import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import javax.batch.operations.BatchRuntimeException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,14 +36,17 @@ public class AdHocStarter {
     private final SimpleJobLauncher syncJobLauncher;
     private final JobPropertyResolvers jobPropertyResolvers;
     private final boolean addUniqueJobParameter;
+    private final JobRegistry jobRegistry;
 
     public AdHocStarter(JobLocator jobLocator, JobRepository jobRepository, JobPropertyResolvers jobPropertyResolvers,
-                        @Value("${com.github.chrisgleissner.springbatchrest.addUniqueJobParameter:true}") boolean addUniqueJobParameter) {
+                        @Value("${com.github.chrisgleissner.springbatchrest.addUniqueJobParameter:true}") boolean addUniqueJobParameter,
+                        JobRegistry jobRegistry) {
         this.jobLocator = jobLocator;
         asyncJobLauncher = jobLauncher(new SimpleAsyncTaskExecutor(), jobRepository);
         syncJobLauncher = jobLauncher(new SyncTaskExecutor(), jobRepository);
         this.jobPropertyResolvers = jobPropertyResolvers;
         this.addUniqueJobParameter = addUniqueJobParameter;
+        this.jobRegistry = jobRegistry;
         log.info("Adding unique job parameter: {}", addUniqueJobParameter);
     }
 
@@ -48,6 +55,26 @@ public class AdHocStarter {
         jobLauncher.setJobRepository(jobRepository);
         jobLauncher.setTaskExecutor(taskExecutor);
         return jobLauncher;
+    }
+    
+    public JobExecution start(Job job) {
+    	return this.start(job, true, null);
+    }
+    
+    public JobExecution start(Job job, Boolean async, Map<String, Object> properties) {
+    	Job existingJob = null;
+		try {
+			existingJob = jobRegistry.getJob(job.getName());
+		} catch (NoSuchJobException e) {
+			log.info("Registering new job: " + job.getName());
+		}
+		JobConfigBuilder builder = new JobConfigBuilder();
+		JobConfig jobConfig = builder
+				.asynchronous(true)
+				.properties(properties == null ? new HashMap<>() : properties)
+				.name(job.getName()).build();
+		JobBuilder.registerJob(jobRegistry, existingJob == null ? job : existingJob);
+		return this.start(jobConfig);
     }
 
     public JobExecution start(JobConfig jobConfig) {

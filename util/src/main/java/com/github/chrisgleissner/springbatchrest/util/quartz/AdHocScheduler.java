@@ -1,6 +1,9 @@
 package com.github.chrisgleissner.springbatchrest.util.quartz;
 
 import com.github.chrisgleissner.springbatchrest.util.core.JobBuilder;
+import com.github.chrisgleissner.springbatchrest.util.core.JobConfig;
+import com.github.chrisgleissner.springbatchrest.util.core.JobParamsDetail;
+
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -12,10 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import static java.lang.String.format;
-import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
 
+import java.util.Date;
 import java.util.TimeZone;
 
 import org.quartz.CronScheduleBuilder;
@@ -41,33 +44,57 @@ public class AdHocScheduler {
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
     }
+
+    /**
+     * Schedules a Spring Batch job via a Quartz cron expression.
+     * Job referenced via jobConfig's name must be a valid registered bean name for a Job object.
+     */
+    public synchronized void schedule(JobConfig jobConfig, Date dateToRun) {
+        log.debug("Scheduling job {} with custom Trigger", jobConfig.getName());
+        try {
+            JobDetail jobDetail = this.jobDetailFor(jobConfig);
+            Trigger trigger = this.triggerFor(dateToRun, jobConfig.getName());
+            scheduler.unscheduleJob(trigger.getKey());
+            scheduler.scheduleJob(jobDetail, trigger);
+            log.info("Scheduled job {} with Date {}", jobConfig.getName(), dateToRun.toString());
+        } catch (Exception e) {
+            throw new RuntimeException(format("Can't schedule job %s with date: %s", jobConfig.getName(), dateToRun.toString()), e);
+        }
+    }
+    
+    /**
+     * Schedules a Spring Batch job via a Quartz cron expression. Uses the job name of the provided job.
+     */
+    public synchronized Job schedule(Job job, String cronExpression) {
+    	return this.schedule(job.getName(), job, cronExpression, TimeZone.getDefault());
+    }
+    
+    /**
+     * Schedules a Spring Batch job via a Quartz cron expression. Uses the job name of the provided job.
+     */
+    public synchronized Job schedule(Job job, String cronExpression, TimeZone timeZone) {
+    	return this.schedule(job.getName(), job, cronExpression, timeZone);
+    }
     
     /**
      * Schedules a Spring Batch job via a Quartz cron expression.
+     * Also registers the job with the specified jobName, rather than the job param's name
      */
     public synchronized Job schedule(String jobName, Job job, String cronExpression) {
-    	return this.schedule(jobName, job, cronExpression, "UTC");
+    	return this.schedule(jobName, job, cronExpression, TimeZone.getDefault());
     }
-
+    
     /**
      * Schedules a Spring Batch job via a Quartz cron expression.
+     * Also registers the job with the specified jobName, rather than the job param's name
      */
-    public synchronized Job schedule(String jobName, Job job, String cronExpression, String timeZone) {
+    public synchronized Job schedule(String jobName, Job job, String cronExpression, TimeZone timeZone) {
         log.debug("Scheduling job {} with CRON expression {}", jobName, cronExpression);
         try {
             jobBuilder.registerJob(job);
-            JobDetail jobDetail = newJob(QuartzJobLauncher.class)
-                    .withIdentity(jobName, GROUP_NAME)
-                    .usingJobData(QuartzJobLauncher.JOB_NAME, jobName)
-                    .build();
+            JobDetail jobDetail = this.jobDetailFor(jobName);
 
-            Trigger trigger = newTrigger()
-                    .withIdentity(jobName + "-trigger", GROUP_NAME)
-                    .withSchedule(CronScheduleBuilder
-                            .cronSchedule(cronExpression)
-                            .inTimeZone(TimeZone.getTimeZone(timeZone)))
-                    .forJob(jobName, GROUP_NAME)
-                    .build();
+            Trigger trigger = this.triggerFor(cronExpression, jobName, timeZone);
 
             scheduler.unscheduleJob(trigger.getKey());
             scheduler.scheduleJob(jobDetail, trigger);
@@ -76,6 +103,32 @@ public class AdHocScheduler {
             throw new RuntimeException(format("Can't schedule job %s with cronExpression %s", jobName, cronExpression), e);
         }
         return job;
+    }
+    
+    /**
+     * Schedules a Spring Batch job via a Quartz cron expression.
+     * Job referenced via jobConfig's name must be a valid registered bean name for a Job object.
+     */
+    public synchronized void schedule(JobConfig jobConfig, String cronExpression) {
+    	this.schedule(jobConfig, cronExpression, TimeZone.getDefault());
+    }
+    
+    /**
+     * Schedules a Spring Batch job via a Quartz cron expression.
+     */
+    public synchronized void schedule(JobConfig jobConfig, String cronExpression, TimeZone timeZone) {
+        log.debug("Scheduling job {} with CRON expression {}", jobConfig.getName(), cronExpression);
+        try {
+            JobDetail jobDetail = this.jobDetailFor(jobConfig);
+
+            Trigger trigger = this.triggerFor(cronExpression, jobConfig.getName(), timeZone);
+
+            scheduler.unscheduleJob(trigger.getKey());
+            scheduler.scheduleJob(jobDetail, trigger);
+            log.info("Scheduled job {} with CRON expression {}", jobConfig.getName(), cronExpression);
+        } catch (Exception e) {
+            throw new RuntimeException(format("Can't schedule job %s with cronExpression %s", jobConfig.getName(), cronExpression), e);
+        }
     }
 
     /**
@@ -133,5 +186,53 @@ public class AdHocScheduler {
 
     public StepBuilderFactory steps() {
         return stepBuilderFactory;
+    }
+    
+    // ===============
+    // Private Helpers
+    // ===============
+    
+    private JobDetail jobDetailFor(String jobName) {
+        JobConfig config = new JobConfig();
+        config.setName(jobName);
+        return this.jobDetailFor(config);
+    }
+    
+    private JobDetail jobDetailFor(JobConfig jobConfig) {
+        JobDetail jobDetail = newJob(QuartzJobLauncher.class)
+                .withIdentity(jobConfig.getName(), GROUP_NAME)
+                .usingJobData(QuartzJobLauncher.JOB_NAME, jobConfig.getName())
+                .build();
+        
+        if (jobConfig.getProperties() != null) {
+        	jobDetail = new JobParamsDetail(jobDetail, jobConfig.getProperties());
+        }
+        return jobDetail;
+    }
+    
+    private Trigger triggerFor(String cronExpression, String jobName, TimeZone timeZone) {
+    	return triggerFor(cronExpression, jobName, timeZone, GROUP_NAME);
+    }
+    
+    private Trigger triggerFor(String cronExpression, String jobName, TimeZone timeZone, String groupName) {
+        return newTrigger()
+                .withIdentity(jobName + "-trigger", groupName)
+                .withSchedule(CronScheduleBuilder
+                        .cronSchedule(cronExpression)
+                        .inTimeZone(timeZone))
+                .forJob(jobName, groupName)
+                .build();
+    }
+    
+    private Trigger triggerFor(Date dateToRun, String jobName) {
+    	return this.triggerFor(dateToRun, jobName, GROUP_NAME);
+    }
+    
+    private Trigger triggerFor(Date dateToRun, String jobName, String groupName) {
+        return newTrigger()
+        		.withIdentity(jobName + "-trigger", groupName)
+        		.startAt(dateToRun)
+        		.forJob(jobName)
+        		.build();
     }
 }

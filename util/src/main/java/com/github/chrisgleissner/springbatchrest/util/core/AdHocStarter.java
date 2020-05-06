@@ -1,5 +1,6 @@
 package com.github.chrisgleissner.springbatchrest.util.core;
 
+import com.github.chrisgleissner.springbatchrest.util.JobParamUtil;
 import com.github.chrisgleissner.springbatchrest.util.core.JobConfig.JobConfigBuilder;
 import com.github.chrisgleissner.springbatchrest.util.core.property.JobPropertyResolvers;
 import lombok.extern.slf4j.Slf4j;
@@ -70,7 +71,7 @@ public class AdHocStarter {
 		}
 		JobConfigBuilder builder = new JobConfigBuilder();
 		JobConfig jobConfig = builder
-				.asynchronous(true)
+				.asynchronous(async)
 				.properties(properties == null ? new HashMap<>() : properties)
 				.name(job.getName()).build();
 		JobBuilder.registerJob(jobRegistry, existingJob == null ? job : existingJob);
@@ -82,8 +83,7 @@ public class AdHocStarter {
             Job job = jobLocator.getJob(jobConfig.getName());
             jobPropertyResolvers.started(jobConfig);
 
-            Map<String, JobParameter> params = Optional.ofNullable(jobConfig.getProperties()).orElse(emptyMap()).entrySet().stream()
-                    .collect(toMap(Map.Entry::getKey, e -> createJobParameter(e.getValue())));
+            Map<String, JobParameter> params = JobParamUtil.convertRawToParamMap(jobConfig.getProperties());
             if (addUniqueJobParameter)
                 params.put("uuid", new JobParameter(UUID.randomUUID().toString()));
             JobParameters jobParameters = new JobParameters(params);
@@ -98,16 +98,5 @@ public class AdHocStarter {
             throw new RuntimeException(format("Failed to start job '%s' with %s. Reason: %s",
                     jobConfig.getName(), jobConfig, e.getMessage()), e);
         }
-    }
-
-    private JobParameter createJobParameter(Object value) {
-        if (value instanceof Date)
-            return new JobParameter((Date) value);
-        else if (value instanceof Long)
-            return new JobParameter((Long) value);
-        else if (value instanceof Double)
-            return new JobParameter((Double) value);
-        else
-            return new JobParameter("" + value);
     }
 }

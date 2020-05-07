@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
+import org.quartz.TriggerKey;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
@@ -200,7 +201,7 @@ public class AdHocScheduler {
     
     private JobDetail jobDetailFor(JobConfig jobConfig) {
         JobDetail jobDetail = newJob(QuartzJobLauncher.class)
-                .withIdentity(jobConfig.getName(), GROUP_NAME)
+                .withIdentity(jobConfig.getName())
                 .usingJobData(QuartzJobLauncher.JOB_NAME, jobConfig.getName())
                 .build();
         
@@ -216,7 +217,7 @@ public class AdHocScheduler {
     
     private Trigger triggerFor(String cronExpression, String jobName, TimeZone timeZone, String groupName) {
         return newTrigger()
-                .withIdentity(jobName + "-trigger", groupName)
+                .withIdentity(this.getTriggerKey(jobName, groupName))
                 .withSchedule(CronScheduleBuilder
                         .cronSchedule(cronExpression)
                         .inTimeZone(timeZone))
@@ -230,9 +231,13 @@ public class AdHocScheduler {
     
     private Trigger triggerFor(Date dateToRun, String jobName, String groupName) {
         return newTrigger()
-        		.withIdentity(jobName + "-trigger", groupName)
+        		.withIdentity(this.getTriggerKey(jobName, groupName))
         		.startAt(dateToRun)
         		.forJob(jobName)
         		.build();
+    }
+    
+    private TriggerKey getTriggerKey(String jobName, String groupName) {
+    	return new TriggerKey(jobName + "-trigger", groupName);
     }
 }

@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
-import org.quartz.TriggerKey;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
@@ -67,7 +66,7 @@ public class AdHocScheduler {
      * Schedules a Spring Batch job via a Quartz cron expression. Uses the job name of the provided job.
      */
     public synchronized Job schedule(Job job, String cronExpression) {
-    	return this.schedule(job.getName(), job, cronExpression, TimeZone.getDefault());
+    	return this.schedule(job.getName(), job, cronExpression, null);
     }
     
     /**
@@ -82,7 +81,7 @@ public class AdHocScheduler {
      * Also registers the job with the specified jobName, rather than the job param's name
      */
     public synchronized Job schedule(String jobName, Job job, String cronExpression) {
-    	return this.schedule(jobName, job, cronExpression, TimeZone.getDefault());
+    	return this.schedule(jobName, job, cronExpression, null);
     }
     
     /**
@@ -111,7 +110,7 @@ public class AdHocScheduler {
      * Job referenced via jobConfig's name must be a valid registered bean name for a Job object.
      */
     public synchronized void schedule(JobConfig jobConfig, String cronExpression) {
-    	this.schedule(jobConfig, cronExpression, TimeZone.getDefault());
+    	this.schedule(jobConfig, cronExpression, null);
     }
     
     /**
@@ -201,7 +200,7 @@ public class AdHocScheduler {
     
     private JobDetail jobDetailFor(JobConfig jobConfig) {
         JobDetail jobDetail = newJob(QuartzJobLauncher.class)
-                .withIdentity(jobConfig.getName())
+                .withIdentity(jobConfig.getName(), GROUP_NAME)
                 .usingJobData(QuartzJobLauncher.JOB_NAME, jobConfig.getName())
                 .build();
         
@@ -216,11 +215,16 @@ public class AdHocScheduler {
     }
     
     private Trigger triggerFor(String cronExpression, String jobName, TimeZone timeZone, String groupName) {
+    	
+    	CronScheduleBuilder builder = CronScheduleBuilder.cronSchedule(cronExpression);
+    	
+    	if (timeZone != null) {
+    		builder.inTimeZone(timeZone);
+    	}
+    	
         return newTrigger()
-                .withIdentity(this.getTriggerKey(jobName, groupName))
-                .withSchedule(CronScheduleBuilder
-                        .cronSchedule(cronExpression)
-                        .inTimeZone(timeZone))
+                .withIdentity(jobName, groupName)
+                .withSchedule(builder)
                 .forJob(jobName, groupName)
                 .build();
     }
@@ -231,13 +235,9 @@ public class AdHocScheduler {
     
     private Trigger triggerFor(Date dateToRun, String jobName, String groupName) {
         return newTrigger()
-        		.withIdentity(this.getTriggerKey(jobName, groupName))
+        		.withIdentity(jobName, groupName)
         		.startAt(dateToRun)
-        		.forJob(jobName)
+        		.forJob(jobName, groupName)
         		.build();
-    }
-    
-    private TriggerKey getTriggerKey(String jobName, String groupName) {
-    	return new TriggerKey(jobName + "-trigger", groupName);
     }
 }

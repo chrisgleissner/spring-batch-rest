@@ -3,8 +3,6 @@ package com.github.chrisgleissner.springbatchrest.util.core;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 import org.springframework.batch.core.Job;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -53,7 +51,7 @@ public class AdHocStarterTest {
                 propMap.put("foo", propertyValue++);
                 starter.start(jobToRun, true, propMap);
             }
-            assertThat(latch.await(2, SECONDS)).isTrue();
+            assertThat(latch.await(4, SECONDS)).isTrue();
             assertThat(propertyValues).hasSize(propertyValue);
         }
         Thread.sleep(100); // Job completion takes place after latch is counted down
@@ -86,7 +84,7 @@ public class AdHocStarterTest {
                         .property("foo", "" + propertyValue++)
                         .asynchronous(true).build());
             }
-            assertThat(latch.await(2, SECONDS)).isTrue();
+            assertThat(latch.await(4, SECONDS)).isTrue();
             assertThat(propertyValues).hasSize(propertyValue);
         }
         Thread.sleep(100); // Job completion takes place after latch is counted down

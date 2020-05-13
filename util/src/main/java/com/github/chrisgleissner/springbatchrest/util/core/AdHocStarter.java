@@ -18,15 +18,11 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 
 import javax.batch.operations.BatchRuntimeException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import static java.lang.String.format;
-import static java.util.Collections.emptyMap;
-import static java.util.stream.Collectors.toMap;
 
 @Slf4j
 @Component

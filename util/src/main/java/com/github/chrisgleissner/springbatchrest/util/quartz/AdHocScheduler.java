@@ -29,7 +29,6 @@ import java.util.TimeZone;
 @Slf4j
 @Component
 public class AdHocScheduler {
-	private static final String GROUP_NAME = "group";
 
 	private final JobBuilder jobBuilder;
 	private Scheduler scheduler;
@@ -193,6 +192,10 @@ public class AdHocScheduler {
 	public StepBuilderFactory steps() {
 		return stepBuilderFactory;
 	}
+	
+	public Scheduler scheduler() {
+		return scheduler;
+	}
 
 	// ===============
 	// Private Helpers
@@ -205,7 +208,7 @@ public class AdHocScheduler {
 	}
 
 	private JobDetail jobDetailFor(JobConfig jobConfig) {
-		JobDetail jobDetail = newJob(QuartzJobLauncher.class).withIdentity(jobConfig.getName(), GROUP_NAME)
+		JobDetail jobDetail = newJob(QuartzJobLauncher.class).withIdentity(jobConfig.getName(), TriggerUtil.QUARTZ_DEFAULT_GROUP)
 				.usingJobData(QuartzJobLauncher.JOB_NAME, jobConfig.getName()).build();
 
 		if (jobConfig.getProperties() != null) {

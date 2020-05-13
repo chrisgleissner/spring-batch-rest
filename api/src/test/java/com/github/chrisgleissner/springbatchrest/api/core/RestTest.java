@@ -2,9 +2,10 @@ package com.github.chrisgleissner.springbatchrest.api.core;
 
 import com.github.chrisgleissner.springbatchrest.api.core.jobexecution.JobExecution;
 import com.github.chrisgleissner.springbatchrest.api.core.jobexecution.JobExecutionResource;
-import com.github.chrisgleissner.springbatchrest.util.core.AdHocBatchConfig;
 import com.github.chrisgleissner.springbatchrest.util.core.JobBuilder;
 import com.github.chrisgleissner.springbatchrest.util.core.JobConfig;
+import com.github.chrisgleissner.springbatchrest.util.core.config.AdHocBatchConfig;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +29,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static com.github.chrisgleissner.springbatchrest.util.core.property.JobPropertyResolvers.JobProperties;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.batch.core.ExitStatus.COMPLETED;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @RunWith(SpringRunner.class)

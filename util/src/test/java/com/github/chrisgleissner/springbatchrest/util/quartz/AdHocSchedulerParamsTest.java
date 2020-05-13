@@ -5,7 +5,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
@@ -23,9 +22,8 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -33,9 +31,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.github.chrisgleissner.springbatchrest.util.JobParamUtil;
 import com.github.chrisgleissner.springbatchrest.util.core.JobBuilder;
 import com.github.chrisgleissner.springbatchrest.util.core.JobConfig;
+import com.github.chrisgleissner.springbatchrest.util.quartz.config.AdHocSchedulerConfig;
+import com.github.chrisgleissner.springbatchrest.util.quartz.AdHocSchedulerParamsTest.CustomContextConfiguration;
 
-import static com.github.chrisgleissner.springbatchrest.util.quartz.QuartzJobLauncher.JOB_LAUNCHER;
-import static com.github.chrisgleissner.springbatchrest.util.quartz.QuartzJobLauncher.JOB_LOCATOR;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -47,18 +45,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import static com.github.chrisgleissner.springbatchrest.util.quartz.QuartzJobLauncher.JOB_LAUNCHER;
+import static com.github.chrisgleissner.springbatchrest.util.quartz.QuartzJobLauncher.JOB_LOCATOR;
+
 /**
- * Tests the ad-hoc Quartz scheduling of Spring Batch jobs, allowing for
- * programmatic scheduling after Spring wiring.
+ * Tests the ad-hoc Quartz scheduling of Spring Batch jobs with parameters
  */
-@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = { AdHocSchedulerConfig.class }, name = "mockJobLauncherContext")
+@ContextConfiguration(
+		classes = {
+			AdHocSchedulerConfig.class,
+			CustomContextConfiguration.class
+		}, 
+		name = "mockJobLauncherContext"
+		)
 public class AdHocSchedulerParamsTest {
 	
 	@Autowired
 	private AdHocScheduler scheduler;
-
+	
 	@Autowired
 	private JobLauncher jobLauncher;
 
@@ -71,27 +76,30 @@ public class AdHocSchedulerParamsTest {
 		scheduler.stop();
 	}
 	
-    @Configuration
-    static class ContextConfiguration {
+	// Override the scheduler's job launcher with a mock so we can verify 
+	// that calls to it contain parameters
+    protected static class CustomContextConfiguration {
 
     	@MockBean
     	public JobLauncher mockJobLauncher;
     	
         @Bean
-        public Scheduler scheduler(JobLocator jobLocator, JobLauncher jobLauncher) throws SchedulerException {
-            Scheduler scheduler = new StdSchedulerFactory().getScheduler();
+        @Primary
+        public Scheduler scheduler(JobLocator jobLocator) throws SchedulerException {
+        	Scheduler scheduler = new StdSchedulerFactory().getScheduler();
+            scheduler.getContext().remove(JOB_LOCATOR);
             scheduler.getContext().put(JOB_LOCATOR, jobLocator);
+            scheduler.getContext().remove(JOB_LAUNCHER);
             scheduler.getContext().put(JOB_LAUNCHER, mockJobLauncher);
             return scheduler;
         }
     }
 
 	@Test
-	@DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+	@DirtiesContext(methodMode = MethodMode.BEFORE_METHOD)
 	public void paramsAddedToScheduledJobWorks() throws InterruptedException, JobExecutionAlreadyRunningException,
-			JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
-		
-		
+			JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException, SchedulerException {
+
 		Job job1 = job("j1");
 		Job job2 = job("j2");
 
@@ -115,7 +123,6 @@ public class AdHocSchedulerParamsTest {
 
 		when(jobLauncher.run(job2, expectedParams))
 				.thenReturn(new JobExecution(new Random().nextLong(), expectedParams));
-
 		
 		scheduler.schedule(job1Config, now);
 		scheduler.schedule(job2Config, now);

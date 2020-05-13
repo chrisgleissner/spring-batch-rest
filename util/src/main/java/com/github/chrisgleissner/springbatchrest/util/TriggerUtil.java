@@ -10,11 +10,11 @@ import org.quartz.Trigger;
 
 public class TriggerUtil {
 
-	// Also defined in AdHocScheduler. TODO: consider using Quartz default group.
-	private static final String GROUP_NAME = "group";
+	// Defined for clarity - passing in null is not obvious to what is happening under the covers
+	public static final String QUARTZ_DEFAULT_GROUP = null;
 
 	public static Trigger triggerFor(String cronExpression, String jobName, TimeZone timeZone) {
-		return triggerFor(cronExpression, jobName, timeZone, GROUP_NAME);
+		return triggerFor(cronExpression, jobName, timeZone, QUARTZ_DEFAULT_GROUP);
 	}
 
 	public static Trigger triggerFor(String cronExpression, String jobName, TimeZone timeZone, String groupName) {
@@ -29,7 +29,7 @@ public class TriggerUtil {
 	}
 
 	public static Trigger triggerFor(Date dateToRun, String jobName) {
-		return triggerFor(dateToRun, jobName, GROUP_NAME);
+		return triggerFor(dateToRun, jobName, QUARTZ_DEFAULT_GROUP);
 	}
 
 	public static Trigger triggerFor(Date dateToRun, String jobName, String groupName) {

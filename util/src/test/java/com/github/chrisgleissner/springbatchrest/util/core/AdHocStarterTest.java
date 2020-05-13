@@ -9,6 +9,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.github.chrisgleissner.springbatchrest.util.core.config.AdHocBatchConfig;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;

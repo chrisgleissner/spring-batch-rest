@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.github.chrisgleissner.springbatchrest.util.core.JobBuilder;
 import com.github.chrisgleissner.springbatchrest.util.core.JobConfig;
+import com.github.chrisgleissner.springbatchrest.util.quartz.config.AdHocSchedulerConfig;
 
 import java.util.concurrent.CountDownLatch;
 

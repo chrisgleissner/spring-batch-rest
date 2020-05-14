@@ -17,33 +17,33 @@ import com.github.chrisgleissner.springbatchrest.util.core.JobParamsDetail;
 @Slf4j
 public class QuartzJobLauncher extends QuartzJobBean {
 
-    public static final String JOB_NAME = "jobName";
-    public static final String JOB_LOCATOR = "jobLocator";
-    public static final String JOB_LAUNCHER = "jobLauncher";
+	public static final String JOB_NAME = "jobName";
+	public static final String JOB_LOCATOR = "jobLocator";
+	public static final String JOB_LAUNCHER = "jobLauncher";
 
-    @Override
-    protected void executeInternal(JobExecutionContext context) {
-        String jobName = null;
-        try {
-        	
-        	JobDetail jobDetail = context.getJobDetail();
-        	JobParameters jobParams = new JobParameters();
-        	if (jobDetail instanceof JobParamsDetail) {
-        		jobParams = JobParamUtil.convertRawToJobParams(((JobParamsDetail)jobDetail).getRawJobParameters());
-        	}
-        	
-            JobDataMap dataMap = context.getJobDetail().getJobDataMap();
-            jobName = dataMap.getString(JOB_NAME);
+	@Override
+	protected void executeInternal(JobExecutionContext context) {
+		String jobName = null;
+		try {
 
-            JobLocator jobLocator = (JobLocator) context.getScheduler().getContext().get(JOB_LOCATOR);
-            JobLauncher jobLauncher = (JobLauncher) context.getScheduler().getContext().get(JOB_LAUNCHER);
+			JobDetail jobDetail = context.getJobDetail();
+			JobParameters jobParams = new JobParameters();
+			if (jobDetail instanceof JobParamsDetail) {
+				jobParams = JobParamUtil.convertRawToJobParams(((JobParamsDetail) jobDetail).getRawJobParameters());
+			}
 
-            Job job = jobLocator.getJob(jobName);
-            log.info("Starting {}", job.getName());
-            JobExecution jobExecution = jobLauncher.run(job, jobParams);
-            log.info("{}_{} was completed successfully", job.getName(), jobExecution.getId());
-        } catch (Exception e) {
-            log.error("Job {} failed", jobName, e);
-        }
-    }
+			JobDataMap dataMap = context.getJobDetail().getJobDataMap();
+			jobName = dataMap.getString(JOB_NAME);
+
+			JobLocator jobLocator = (JobLocator) context.getScheduler().getContext().get(JOB_LOCATOR);
+			JobLauncher jobLauncher = (JobLauncher) context.getScheduler().getContext().get(JOB_LAUNCHER);
+
+			Job job = jobLocator.getJob(jobName);
+			log.info("Starting {}", job.getName());
+			JobExecution jobExecution = jobLauncher.run(job, jobParams);
+			log.info("{}_{} was completed successfully", job.getName(), jobExecution.getId());
+		} catch (Exception e) {
+			log.error("Job {} failed", jobName, e);
+		}
+	}
 }

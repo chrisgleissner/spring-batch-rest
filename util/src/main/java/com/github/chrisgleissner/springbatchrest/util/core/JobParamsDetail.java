@@ -24,6 +24,8 @@ public class JobParamsDetail extends JobDetailImpl {
 	private static final long serialVersionUID = -4813776846767160965L;
 	private Map<String, Object> rawJobParameters;
 
+	// Constructor to do a deep copy all data from JobDetail into this subclass.
+	// Based off of JobBuilder's construction code.
 	public JobParamsDetail(JobDetail jobDetail) {
 
 		this.setJobClass(jobDetail.getJobClass());

@@ -54,7 +54,7 @@ public class AdHocStarterTest {
                 starter.start(jobToRun, true, propMap);
             }
             assertThat(latch.await(2, SECONDS)).isTrue();
-            assertThat(propertyValues).hasSize(propertyValue);
+            assertThat(propertyValues).hasSize(propertyValue); // TODO: Intermittent failures here - presumed timing issue
         }
         Thread.sleep(100); // Job completion takes place after latch is counted down
         assertThat(JobProperties.of("AdHocStarterTest0").getProperty("foo")).isEqualTo("bar");

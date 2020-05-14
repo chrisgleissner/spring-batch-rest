@@ -15,8 +15,7 @@ public class DateUtilTest {
 		Date now = new Date();
 		LocalDateTime localDateTime = DateUtil.localDateTime(now);
 		Instant ldtInstant = localDateTime.toInstant(OffsetDateTime.now().getOffset());
-		
+
 		Assertions.assertEquals(ldtInstant, now.toInstant());
 	}
-	
 }

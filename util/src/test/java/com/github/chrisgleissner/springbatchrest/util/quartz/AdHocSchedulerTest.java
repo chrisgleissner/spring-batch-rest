@@ -2,6 +2,7 @@ package com.github.chrisgleissner.springbatchrest.util.quartz;
 
 import org.junit.Test;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.Job;
@@ -94,16 +95,52 @@ public class AdHocSchedulerTest {
 		jobBuilder.registerJob(job1);
 		jobBuilder.registerJob(job2);
 
-		JobConfig job1Config = JobConfig.builder().name("j1").build();
 		JobConfig job2Config = JobConfig.builder().name("j2").build();
 
-		scheduler.schedule(job1Config, TRIGGER_EVERY_SECOND);
+		scheduler.schedule("j1", job1, TRIGGER_EVERY_SECOND);
 		scheduler.schedule(job2Config, TRIGGER_EVERY_SECOND);
 		scheduler.start();
 
 		latch1.await(4, SECONDS);
 		latch2.await(4, SECONDS);
 		scheduler.pause();
+	}
+
+	@Test
+	public void happyCaseSchedulerStartPauseResumeNoThrow() {
+		Assertions.assertDoesNotThrow(() -> {
+			scheduler.start();
+		});
+		Assertions.assertDoesNotThrow(() -> {
+			scheduler.pause();
+		});
+		Assertions.assertDoesNotThrow(() -> {
+			scheduler.resume();
+		});
+		// Future - handle & test the case where the scheduler has been shutdown and
+		// needs re-initialization
+		// https://stackoverflow.com/questions/15020625/quartz-how-to-shutdown-and-restart-the-scheduler
+	}
+
+	@Test
+	public void exceptionForBadJobConfigDate() {
+		Assertions.assertThrows(RuntimeException.class, () -> {
+			scheduler.schedule(JobConfig.builder().name(null).asynchronous(false).build(), new Date());
+		});
+	}
+
+	@Test
+	public void exceptionForBadJobConfigCron() {
+		Assertions.assertThrows(RuntimeException.class, () -> {
+			scheduler.schedule(JobConfig.builder().name(null).asynchronous(false).build(), TRIGGER_EVERY_SECOND);
+		});
+	}
+
+	@Test
+	public void exceptionForBadParamsCron() {
+		Assertions.assertThrows(RuntimeException.class, () -> {
+			scheduler.schedule(null, null, TRIGGER_EVERY_SECOND);
+		});
 	}
 
 	private Job job(String jobName, CountDownLatch latch) {

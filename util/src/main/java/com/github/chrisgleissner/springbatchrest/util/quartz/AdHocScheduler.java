@@ -169,10 +169,6 @@ public class AdHocScheduler {
 		return stepBuilderFactory;
 	}
 
-	public Scheduler scheduler() {
-		return scheduler;
-	}
-
 	// ===============
 	// Private Helpers
 	// ===============

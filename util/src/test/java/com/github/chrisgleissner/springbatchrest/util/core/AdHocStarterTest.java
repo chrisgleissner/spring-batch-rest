@@ -53,7 +53,7 @@ public class AdHocStarterTest {
                 propMap.put("foo", propertyValue++);
                 starter.start(jobToRun, true, propMap);
             }
-            assertThat(latch.await(2, SECONDS)).isTrue();
+            assertThat(latch.await(3, SECONDS)).isTrue();
             assertThat(propertyValues).hasSize(propertyValue); // TODO: Intermittent failures here - presumed timing issue
         }
         Thread.sleep(100); // Job completion takes place after latch is counted down
@@ -86,8 +86,8 @@ public class AdHocStarterTest {
                         .property("foo", "" + propertyValue++)
                         .asynchronous(true).build());
             }
-            assertThat(latch.await(2, SECONDS)).isTrue();
-            assertThat(propertyValues).hasSize(propertyValue);
+            assertThat(latch.await(3, SECONDS)).isTrue();
+            assertThat(propertyValues).hasSize(propertyValue); // TODO: Intermittent failures here - presumed timing issue
         }
         Thread.sleep(100); // Job completion takes place after latch is counted down
         assertThat(JobProperties.of("AdHocStarterTest0").getProperty("foo")).isEqualTo("bar");

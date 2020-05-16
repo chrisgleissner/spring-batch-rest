@@ -1,4 +1,4 @@
-package com.github.chrisgleissner.springbatchrest.util.core;
+package com.github.chrisgleissner.springbatchrest.util.core.config;
 
 import org.springframework.batch.core.configuration.JobLocator;
 import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
@@ -16,12 +16,19 @@ import javax.sql.DataSource;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Configuration @ComponentScan @EnableBatchProcessing @EnableAspectJAutoProxy
+@Configuration 
+@ComponentScan(basePackages = { 
+		"com.github.chrisgleissner.springbatchrest.util.core",
+		"com.github.chrisgleissner.springbatchrest.util.core.property"
+		})
+@EnableBatchProcessing 
+@EnableAspectJAutoProxy
 public class AdHocBatchConfig extends DefaultBatchConfigurer {
 
     @Autowired
     private JobRepository jobRepository;
 
+    // TODO: These seem to be unused. Consider removal after Chris's feedback.
     @Autowired
     private JobLocator jobLocator;
 

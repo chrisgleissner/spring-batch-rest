@@ -3,13 +3,13 @@ package com.github.chrisgleissner.springbatchrest.util.core;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 import org.springframework.batch.core.Job;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import com.github.chrisgleissner.springbatchrest.util.core.config.AdHocBatchConfig;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,8 +53,8 @@ public class AdHocStarterTest {
                 propMap.put("foo", propertyValue++);
                 starter.start(jobToRun, true, propMap);
             }
-            assertThat(latch.await(2, SECONDS)).isTrue();
-            assertThat(propertyValues).hasSize(propertyValue);
+            assertThat(latch.await(3, SECONDS)).isTrue();
+            assertThat(propertyValues).hasSize(propertyValue); // TODO: Intermittent failures here - presumed timing issue
         }
         Thread.sleep(100); // Job completion takes place after latch is counted down
         assertThat(JobProperties.of("AdHocStarterTest0").getProperty("foo")).isEqualTo("bar");
@@ -86,8 +86,8 @@ public class AdHocStarterTest {
                         .property("foo", "" + propertyValue++)
                         .asynchronous(true).build());
             }
-            assertThat(latch.await(2, SECONDS)).isTrue();
-            assertThat(propertyValues).hasSize(propertyValue);
+            assertThat(latch.await(3, SECONDS)).isTrue();
+            assertThat(propertyValues).hasSize(propertyValue); // TODO: Intermittent failures here - presumed timing issue
         }
         Thread.sleep(100); // Job completion takes place after latch is counted down
         assertThat(JobProperties.of("AdHocStarterTest0").getProperty("foo")).isEqualTo("bar");

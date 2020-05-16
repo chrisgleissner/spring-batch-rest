@@ -1,10 +1,13 @@
 package com.github.chrisgleissner.springbatchrest.util.core;
 
 import com.github.chrisgleissner.springbatchrest.util.JobParamUtil;
-import com.github.chrisgleissner.springbatchrest.util.core.JobConfig.JobConfigBuilder;
 import com.github.chrisgleissner.springbatchrest.util.core.property.JobPropertyResolvers;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.*;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobExecutionException;
+import org.springframework.batch.core.JobParameter;
+import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.configuration.JobLocator;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -65,8 +68,7 @@ public class AdHocStarter {
 		} catch (NoSuchJobException e) {
 			log.info("Registering new job: " + job.getName());
 		}
-		JobConfigBuilder builder = new JobConfigBuilder();
-		JobConfig jobConfig = builder
+		JobConfig jobConfig = JobConfig.builder()
 				.asynchronous(async)
 				.properties(properties == null ? new HashMap<>() : properties)
 				.name(job.getName()).build();

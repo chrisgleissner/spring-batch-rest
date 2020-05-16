@@ -80,13 +80,13 @@ Maven:
 <dependency>
     <groupId>com.github.chrisgleissner</groupId>
     <artifactId>spring-batch-rest-api</artifactId>
-    <version>1.4.3</version>
+    <version>1.5.0</version>
 </dependency>
 ```
 
 Gradle:
 ```
-implementation 'com.github.chrisgleissner:spring-batch-rest-api:1.4.1'
+implementation 'com.github.chrisgleissner:spring-batch-rest-api:1.5.0'
 ```
 
 ### Quartz API
@@ -99,13 +99,13 @@ Maven:
 <dependency>
     <groupId>com.github.chrisgleissner</groupId>
     <artifactId>spring-batch-rest-quartz-api</artifactId>
-    <version>1.4.3</version>
+    <version>1.5.0</version>
 </dependency>
 ```
 
 Gradle:
 ```
-implementation 'com.github.chrisgleissner:spring-batch-rest-quartz-api:1.4.1'
+implementation 'com.github.chrisgleissner:spring-batch-rest-quartz-api:1.5.0'
 ```
 
 ### See it in Action

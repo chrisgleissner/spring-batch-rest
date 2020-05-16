@@ -8,7 +8,7 @@
 
 REST API for <a href="https://spring.io/projects/spring-batch">Spring Batch</a> based on <a href="https://github.com/spring-projects/spring-boot">Spring Boot 2.2</a> and <a href="https://github.com/spring-projects/spring-hateoas">Spring HATOEAS</a>. It comes with an OpenAPI 3 documentation provided by <a href="https://github.com/springdoc/springdoc-openapi">Springdoc</a>.
 
-Supports Java versions 8 and 11.
+Supports Java 8 and above. Tested using OpenJDK 8, 11, and 14.
 
 ## Features
 - Get information on jobs, job executions, and Quartz schedules

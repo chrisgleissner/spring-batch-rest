@@ -26,7 +26,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.github.chrisgleissner.springbatchrest.util.core.property.JobPropertyResolvers.JobProperties;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.batch.core.ExitStatus.COMPLETED;
@@ -37,35 +36,29 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @TestPropertySource(properties = "ServerTest-property=0")
 @Import(AdHocBatchConfig.class)
 public class RestTest {
-
     private static final String JOB_NAME = "ServerTest-job";
     private static final String PROPERTY_NAME = "ServerTest-property";
     private static final String EXCEPTION_MESSAGE_PROPERTY_NAME = "ServerTest-exceptionMessage";
     private static final String CRON_EXPRESSION = "0/1 * * * * ?";
+    private static final Set<String> propertyValues = new ConcurrentSkipListSet<>();
 
-    private static Set<String> propertyValues = new ConcurrentSkipListSet<>();
+    private final JobConfig jobConfig = JobConfig.builder().name(JOB_NAME).asynchronous(false).build();
+    private final CountDownLatch jobExecutedOnce = new CountDownLatch(1);
+    private final AtomicBoolean firstExecution = new AtomicBoolean(true);
 
-    @LocalServerPort
-    private int port;
-    @Autowired
-    private TestRestTemplate restTemplate;
-    @Autowired
-    private AdHocScheduler adHocScheduler;
-    @Autowired
-    private JobBuilder jobBuilder;
-
-    private JobConfig jobConfig = JobConfig.builder().name(JOB_NAME).asynchronous(false).build();
-    private CountDownLatch jobExecutedOnce = new CountDownLatch(1);
-    private AtomicBoolean firstExecution = new AtomicBoolean(true);
+    @LocalServerPort private int port;
+    @Autowired private TestRestTemplate restTemplate;
+    @Autowired private AdHocScheduler adHocScheduler;
+    @Autowired private JobBuilder jobBuilder;
 
     @Before
     public void setUp() throws InterruptedException {
         if (firstExecution.compareAndSet(true, false)) {
-            Job job = jobBuilder.createJob(JOB_NAME, () -> {
-                String propertyValue = JobProperties.of(JOB_NAME).getProperty(PROPERTY_NAME);
+            Job job = jobBuilder.createJob(JOB_NAME, propertyResolver -> {
+                String propertyValue = propertyResolver.getProperty(PROPERTY_NAME);
                 propertyValues.add(propertyValue);
 
-                String exceptionMessage = JobProperties.of(JOB_NAME).getProperty(EXCEPTION_MESSAGE_PROPERTY_NAME);
+                String exceptionMessage = propertyResolver.getProperty(EXCEPTION_MESSAGE_PROPERTY_NAME);
                 if (exceptionMessage != null)
                     throw new RuntimeException(exceptionMessage);
 

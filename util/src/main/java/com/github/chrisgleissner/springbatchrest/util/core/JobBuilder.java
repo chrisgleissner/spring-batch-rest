@@ -1,36 +1,29 @@
 package com.github.chrisgleissner.springbatchrest.util.core;
 
+import com.github.chrisgleissner.springbatchrest.util.core.tasklet.PropertyResolverConsumerTasklet;
+import com.github.chrisgleissner.springbatchrest.util.core.tasklet.RunnableTasklet;
+import com.github.chrisgleissner.springbatchrest.util.core.tasklet.StepExecutionListenerTasklet;
+import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.StepContribution;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.JobFactory;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.PropertyResolver;
 import org.springframework.stereotype.Component;
 
-import static org.springframework.batch.repeat.RepeatStatus.FINISHED;
+import java.util.function.Consumer;
 
-@Component
+@Component @RequiredArgsConstructor
 public class JobBuilder {
     private final JobRegistry jobRegistry;
     private final JobBuilderFactory jobs;
     private final StepBuilderFactory steps;
-
-    @Autowired
-    public JobBuilder(JobRegistry jobRegistry, JobBuilderFactory jobs, StepBuilderFactory steps) {
-        this.jobRegistry = jobRegistry;
-        this.jobs = jobs;
-        this.steps = steps;
-    }
-
-    public Job registerJob(Job job) {
-        return registerJob(jobRegistry, job);
-    }
+    private final Environment environment;
 
     public static Job registerJob(JobRegistry jobRegistry, Job job) {
         jobRegistry.unregister(job.getName());
@@ -52,24 +45,24 @@ public class JobBuilder {
         return job;
     }
 
-    public Job createJob(String name, Runnable r) {
-        return registerJob(jobs.get(name)
-                .incrementer(new RunIdIncrementer())
-                .start(steps.get("step").allowStartIfComplete(true).tasklet(new RunnableTaskletAdapter(r)).build()).build());
+    public Job registerJob(Job job) {
+        return registerJob(jobRegistry, job);
     }
 
-    private class RunnableTaskletAdapter implements Tasklet {
-        private Runnable r;
-
-        public RunnableTaskletAdapter(Runnable r) {
-            this.r = r;
-        }
-
-        @Override
-        public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
-            r.run();
-            return FINISHED;
-        }
+    public Job createJob(String name, Runnable runnable) {
+        return createJob(name, new RunnableTasklet(runnable));
     }
 
+    private Job createJob(String name, Tasklet tasklet) {
+        return registerJob(jobs.get(name).incrementer(new RunIdIncrementer())
+                .start(steps.get("step").allowStartIfComplete(true).tasklet(tasklet).build()).build());
+    }
+
+    public Job createJob(String name, Consumer<PropertyResolver> propertyResolverConsumer) {
+        return createJob(name, new PropertyResolverConsumerTasklet(environment, propertyResolverConsumer));
+    }
+
+    public Job createJobFromStepExecutionConsumer(String name, Consumer<StepExecution> stepExecutionConsumer) {
+        return createJob(name, new StepExecutionListenerTasklet(stepExecutionConsumer));
+    }
 }

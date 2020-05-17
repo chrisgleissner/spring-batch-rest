@@ -8,7 +8,7 @@
 
 REST API for <a href="https://spring.io/projects/spring-batch">Spring Batch</a> based on <a href="https://github.com/spring-projects/spring-boot">Spring Boot 2.2</a> and <a href="https://github.com/spring-projects/spring-hateoas">Spring HATOEAS</a>. It comes with an OpenAPI 3 documentation provided by <a href="https://github.com/springdoc/springdoc-openapi">Springdoc</a>.
 
-Supports Java 8 and above. Tested using OpenJDK 8, 11, and 14.
+Supports Java 8 and above. Tested on OpenJDK 8, 11, and 14.
 
 ## Features
 - Get information on jobs, job executions, and Quartz schedules
@@ -227,29 +227,60 @@ This disables the global exception handling via `com.github.chrisgleissner.sprin
 
 ## Job Property Overrides
 
-Properties can be overridden when starting a job via REST. These overrides can then be accessed from a job either via:
+Properties can be overridden when starting a job via REST. You can then access these overrides in one of the following ways.
+
+### @Value
+
+Annotate your Spring bean method with `@StepScope` and use the `@Value("#{jobParameters['name']}")` annotation on a method parameter 
+to specify the desired job parameter name. 
+
+Please note that this approach won't transparently fall back to Spring environment properties. Thus,
+if this is desired, you should manually check if a job parameter is `null` and in this case return it from the Spring `Environment` instance. 
+
+Example:
+```java
+@Bean @StepScope  
+ItemWriter<Object> writer(@Value("#{jobParameters['propName']}") String prop) {
+    // ... 
+}
+```
+
+### PropertyResolver
+
+When using `AdhocStarter`, you can create a `Job` using a `JobBuilder` and pass in a `Consumer<PropertyResolver>`. 
+
+Properties looked up from this `PropertyResolver` transparently fall back to the Spring environment if properties can't be found in the job parameters.
+
+Example:
+```java
+Job job = jobBuilder.createJob("sampleJob", propertyResolver -> {
+    String propertyValue = propertyResolver.getProperty("sampleProperty");
+    ...
+});
+```
+### JobProperties
+
+In case you don't execute the same job concurrently, you may also look up properties from the `JobProperties` singleton. 
+
+Properties looked up from this singleton transparently fall back to the Spring environment if properties can't be found in the 
+job parameters. 
+
+This approach is *deprecated* as it doesn't work with concurrent execution of the same job. Therefore, it is recommended to use one
+of the other approaches.
+
+Example:
 ```java
 @Bean
 ItemWriter<Object> writer() {
     return new ItemWriter<Object>() {
         @Override
         public void write(List<?> items) throws Exception {
-           String prop = JobPropertyResolvers.JobProperties.of("jobName").getProperty("propName");
+           String prop = JobPropertyResolvers.JobProperties.of("sampleJob").getProperty("sampleProperty");
            // ...
         }
     }
 }
 ```
-or alternatively by using `@StepScope`-annotated beans:
-```java
-@StepScope
-@Bean 
-ItemWriter<Object> writer(@Value("#{jobParameters['propName']}") String prop) {
-    // ... 
-}
-```
-
-If a property is not overridden, it is resolved against the Spring environment. All overrides are reverted on job completion.
 
 ## Utilities
 

@@ -23,18 +23,10 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = DEFINED_PORT)
 public class PersonJobTest {
-
-    @LocalServerPort
-    private int port;
-
-    @Autowired
-    private TestRestTemplate restTemplate;
-
-    @Autowired
-    private PersonJobConfig.CacheItemWriter<PersonJobConfig.Person> cacheItemWriter;
-
-    @Autowired
-    private JobRegistry jobRegistry;
+    @LocalServerPort private int port;
+    @Autowired private TestRestTemplate restTemplate;
+    @Autowired private PersonJobConfig.CacheItemWriter<PersonJobConfig.Person> cacheItemWriter;
+    @Autowired private JobRegistry jobRegistry;
 
     @Test
     public void canStartJob() throws NoSuchJobException {
@@ -58,16 +50,11 @@ public class PersonJobTest {
     }
 
     private JobExecution startJob(Optional<String> lastNamePrefix, Optional<Boolean> upperCase) {
-        JobConfig.JobConfigBuilder jobConfigBuilder = JobConfig.builder()
-                .name(PersonJobConfig.JOB_NAME).asynchronous(false);
-        if (lastNamePrefix.isPresent())
-            jobConfigBuilder.property(PersonJobConfig.LAST_NAME_PREFIX, lastNamePrefix.get());
-        if (upperCase.isPresent())
-            jobConfigBuilder.property("upperCase", "" + upperCase.get());
-        JobConfig jobConfig = jobConfigBuilder.build();
-
+        JobConfig.JobConfigBuilder jobConfigBuilder = JobConfig.builder().name(PersonJobConfig.JOB_NAME).asynchronous(false);
+        lastNamePrefix.ifPresent(s -> jobConfigBuilder.property(PersonJobConfig.LAST_NAME_PREFIX, s));
+        upperCase.ifPresent(aBoolean -> jobConfigBuilder.property("upperCase", "" + aBoolean));
         ResponseEntity<JobExecutionResource> responseEntity = restTemplate.postForEntity("http://localhost:" + port + "/jobExecutions",
-                jobConfig, JobExecutionResource.class);
+                jobConfigBuilder.build(), JobExecutionResource.class);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         return responseEntity.getBody().getJobExecution();
     }

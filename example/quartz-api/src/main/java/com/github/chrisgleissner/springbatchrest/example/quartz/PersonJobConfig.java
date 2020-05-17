@@ -4,6 +4,7 @@ import com.github.chrisgleissner.springbatchrest.util.quartz.AdHocScheduler;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -23,30 +24,25 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
-import static com.github.chrisgleissner.springbatchrest.util.core.property.JobPropertyResolvers.JobProperties;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.synchronizedList;
 
-@Slf4j
-@Configuration
+@Configuration @RequiredArgsConstructor @Slf4j
 public class PersonJobConfig {
-
     static final String JOB_NAME = "personJob";
     static final String LAST_NAME_PREFIX = "lastNamePrefix";
 
-    @Autowired
-    JobBuilderFactory jobs;
-
-    @Autowired
-    StepBuilderFactory steps;
-
-    @Autowired
-    private AdHocScheduler adHocScheduler;
+    private final JobBuilderFactory jobs;
+    private final StepBuilderFactory steps;
+    private final AdHocScheduler adHocScheduler;
+    private final Environment environment;
 
     @Bean
     Job personJob(@Qualifier("personStep") Step personStep) {
@@ -81,24 +77,25 @@ public class PersonJobConfig {
                 .build();
     }
 
-    @Bean
-    ItemProcessor personProcessor(@Qualifier("personNameCaseChange") ItemProcessor personNameCaseChange) {
+    @Bean @StepScope
+    ItemProcessor personProcessor(
+            @Qualifier("personNameCaseChange") ItemProcessor personNameCaseChange,
+            @Value("#{jobParameters['" + LAST_NAME_PREFIX + "']}") String lastNamePrefix) {
         CompositeItemProcessor p = new CompositeItemProcessor();
-        p.setDelegates(newArrayList(personNameFilter(), personNameCaseChange));
+        p.setDelegates(newArrayList(
+                personNameFilter(Optional.ofNullable(lastNamePrefix).orElseGet(() -> environment.getProperty(LAST_NAME_PREFIX))),
+                personNameCaseChange));
         return p;
     }
 
-    @Bean
-    ItemProcessor personNameFilter() {
+    private ItemProcessor personNameFilter(String lastNamePrefix) {
         return new FunctionItemProcessor<Person, Person>(p -> {
-            String lastNamePrefix = JobProperties.of(PersonJobConfig.JOB_NAME).getProperty(LAST_NAME_PREFIX);
             log.info("Last name prefix: {}", lastNamePrefix);
             return p.lastName != null && p.lastName.startsWith(lastNamePrefix) ? p : null;
         });
     }
 
-    @StepScope
-    @Bean
+    @Bean @StepScope
     ItemProcessor personNameCaseChange(@Value("#{jobParameters['upperCase']}") Boolean upperCaseParam) {
         boolean upperCase = upperCaseParam == null ? false : upperCaseParam;
         log.info("personNameCaseChange(upperCase={})", upperCase);

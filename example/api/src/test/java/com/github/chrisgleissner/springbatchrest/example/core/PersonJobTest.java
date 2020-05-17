@@ -31,18 +31,12 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(webEnvironment = DEFINED_PORT)
 @EnableAutoConfiguration
 public class PersonJobTest {
-
-    @LocalServerPort
-    private int port;
-
-    @Autowired
-    private TestRestTemplate restTemplate;
-
-    @Autowired
-    private PersonJobConfig.CacheItemWriter<PersonJobConfig.Person> cacheItemWriter;
+    @LocalServerPort private int port;
+    @Autowired private TestRestTemplate restTemplate;
+    @Autowired private PersonJobConfig.CacheItemWriter<PersonJobConfig.Person> cacheItemWriter;
 
     @Test
-    public void canStartJob() throws NoSuchJobException {
+    public void canStartJob() {
         cacheItemWriter.clear();
         startJob(Optional.empty(), Optional.empty());
         assertThat(cacheItemWriter.getItems()).hasSize(5);

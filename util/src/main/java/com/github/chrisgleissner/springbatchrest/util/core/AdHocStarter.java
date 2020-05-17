@@ -30,7 +30,6 @@ import static java.lang.String.format;
 @Slf4j
 @Component
 public class AdHocStarter {
-
     private final JobLocator jobLocator;
     private final SimpleJobLauncher asyncJobLauncher;
     private final SimpleJobLauncher syncJobLauncher;

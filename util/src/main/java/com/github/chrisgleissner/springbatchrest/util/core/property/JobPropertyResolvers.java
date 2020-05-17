@@ -22,7 +22,7 @@ public class JobPropertyResolvers implements Consumer<JobExecution> {
 
     /**
      * @deprecated Accessing {@link org.springframework.batch.core.Job} properties via this singleton is not safe for
-     * asynchronously executing the same code>Job</code> multiple times with different properties. In this case a {@link JobExecution}
+     * asynchronously executing the same <code>Job</code> multiple times with different properties. In this case a {@link JobExecution}
      * may incorrectly use the properties of another, concurrently running <code>JobExecution</code> of the same <code>Job</code>.
      *
      * <p>
@@ -30,10 +30,12 @@ public class JobPropertyResolvers implements Consumer<JobExecution> {
      * Spring-wired job beans with <code>@Value("#{jobParameters['key']}")</code>. You can get a handle of a <code>StepExecution</code>
      * by implementing {@link org.springframework.batch.core.StepExecutionListener} or extending
      * {@link com.github.chrisgleissner.springbatchrest.util.core.tasklet.StepExecutionListenerTasklet}.
+     * </p>
      *
      * <p>For convenience, when using
      * {@link com.github.chrisgleissner.springbatchrest.util.core.JobBuilder#createJob(String, Consumer)} to build a job,
      * the returned {@link PropertyResolver} will first resolve against job properties, then against Spring properties.
+     * </p>
      *
      * @see com.github.chrisgleissner.springbatchrest.util.core.JobBuilder#createJob(String, Consumer)
      */

@@ -231,7 +231,7 @@ Properties can be overridden when starting a job via REST. You can then access t
 
 ### @Value
 
-Annotate your Spring bean method with `@StepScope` and use the `@Value("#{jobParameters['name']}")` annotation on a method parameter 
+Annotate your Spring bean method with `@StepScope` and use the `@Value` annotation on a method parameter 
 to specify the desired job parameter name. 
 
 Please note that this approach won't transparently fall back to Spring environment properties. Thus,
@@ -240,7 +240,7 @@ if this is desired, you should manually check if a job parameter is `null` and i
 Example:
 ```java
 @Bean @StepScope  
-ItemWriter<Object> writer(@Value("#{jobParameters['propName']}") String prop) {
+ItemWriter<Object> writer(@Value("#{jobParameters['sampleProperty']}") String sampleProperty) {
     // ... 
 }
 ```
@@ -255,9 +255,10 @@ Example:
 ```java
 Job job = jobBuilder.createJob("sampleJob", propertyResolver -> {
     String propertyValue = propertyResolver.getProperty("sampleProperty");
-    ...
+    // ...
 });
 ```
+
 ### JobProperties
 
 In case you don't execute the same job concurrently, you may also look up properties from the `JobProperties` singleton. 
@@ -275,7 +276,7 @@ ItemWriter<Object> writer() {
     return new ItemWriter<Object>() {
         @Override
         public void write(List<?> items) throws Exception {
-           String prop = JobPropertyResolvers.JobProperties.of("sampleJob").getProperty("sampleProperty");
+           String sampleProperty = JobPropertyResolvers.JobProperties.of("sampleJob").getProperty("sampleProperty");
            // ...
         }
     }

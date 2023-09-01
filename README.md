@@ -15,46 +15,6 @@ Supports Java 8 and above. Tested on OpenJDK 8 and 11.
 - Start job execution (synchronous or asynchronous) with optional job property overrides. The job properties can
 either be obtained via a custom API or via standard Spring Batch job parameters, accessible from <a href="https://docs.spring.io/spring-batch/trunk/apidocs/org/springframework/batch/core/scope/StepScope.html">step-scoped beans</a>.
 
-## Live Demo
-
-Check out the <a href="https://spring-batch-rest.herokuapp.com/swagger-ui.html">live demo</a> of this project's Swagger UI. This demo is automatically updated whenever the repo's master branch changes. Please note that it may take up to 30s for this Heroku app to perform a cold start after it has not been used for a while.
-
-Here's how to run a <a href="https://github.com/chrisgleissner/spring-batch-rest/tree/master/example/api/src/main/java/com/github/chrisgleissner/springbatchrest/example/core/PersonJobConfig.java">sample job<a>:
-* Click on `Spring Batch Job Executions`, then on `POST`. Now click on `Try it Out` on the right-hand side. Replace the contents of the `Example Value` input field with `{"name": "personJob"}` and press `Execute`. 
-* The job has now been triggered. When it completes, you'll get a response body similar to:
-```
-{
-  "jobExecution": {
-    "id": 1,
-    "jobId": 1,
-    "jobName": "personJob",
-    "startTime": "2018-12-23T18:19:13.185",
-    "endTime": "2018-12-23T18:19:13.223",
-    "exitCode": "COMPLETED",
-    "exitDescription": "",
-    "status": "COMPLETED",
-    "exceptions": []
-  },
-  "_links": {
-    "self": {
-      "href": "https://spring-batch-rest.herokuapp.com/jobExecutions/1"
-    }
-  }
-}
-```
-* You can now view this and other recently completed jobs via the <a href="https://spring-batch-rest.herokuapp.com/jobExecutions?jobName=personJob&limitPerJob=3">job execution overview<a>:
-```
-{
-  "_embedded": {
-  "jobExecutionResourceList": [
-    {
-    "jobExecution": {
-      "id": 1,
-      "jobId": 1,
-      "jobName": "personJob",
-...
-```
-
 ## Getting Started
 
 To integrate the REST API in your Spring Boot project, first ensure you have an entry point to your application such as
@@ -110,7 +70,7 @@ implementation 'com.github.chrisgleissner:spring-batch-rest-quartz-api:1.5.1'
 
 ### See it in Action
 
-To see `spring-batch-rest-api` in action, run
+To see `spring-batch-rest-api` in action, first install Java 8 or 11 as well as Maven, then run
 ```text
 mvn install -Dmaven.test.skip; java -jar example/api/target/*.jar
 ```
@@ -121,8 +81,67 @@ mvn install -Dmaven.test.skip; java -jar example/quartz-api/target/*.jar
 ```
  
 Once it's up, check the Swagger REST API docs at 
-<a href="http://localhost:8080/swagger-ui.html">http://localhost:8080/swagger-ui.html</a>.
+[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html).
 
+### Sample Walkthrough
+
+Here's how to run a [sample job](https://github.com/chrisgleissner/spring-batch-rest/tree/master/example/api/src/main/java/com/github/chrisgleissner/springbatchrest/example/core/PersonJobConfig.java), assuming
+you've started the API as described above:
+
+* Click on `POST` to the left of `/jobExecutions`, then on `Try it Out` on the right-hand side. Replace the contents of the `Request body` with `{"name": "personJob"}`, then click `Execute`.
+* The job has now been triggered. When it completes, you'll get a response body similar to:
+```
+{
+  "jobExecution": {
+    "id": 0,
+    "jobId": 0,
+    "jobName": "personJob",
+    "startTime": "2023-09-01T19:01:55.264",
+    "endTime": "2023-09-01T19:01:55.317",
+    "exitCode": "COMPLETED",
+    "exitDescription": "",
+    "status": "COMPLETED",
+    "exceptions": []
+  },
+  "_links": {
+    "self": {
+      "href": "http://localhost:8080/jobExecutions/0"
+    }
+  }
+}
+```
+* You can now view this and other recently completed jobs by clicking on `GET` to the left of `/jobExecutions`, then on `Try it Out` followed by `Execute`. You should see something like:
+```
+{
+  "_embedded": {
+    "jobExecutionResourceList": [
+      {
+        "jobExecution": {
+          "id": 0,
+          "jobId": 0,
+          "jobName": "personJob",
+          "startTime": "2023-09-01T19:01:55.264",
+          "endTime": "2023-09-01T19:01:55.317",
+          "exitCode": "COMPLETED",
+          "exitDescription": "",
+          "status": "COMPLETED",
+          "exceptions": []
+        },
+        "_links": {
+          "self": {
+            "href": "http://localhost:8080/jobExecutions/0"
+          }
+        }
+      }
+    ]
+  },
+  "_links": {
+    "self": {
+      "href": "http://localhost:8080/jobExecutions?limitPerJob=3"
+    }
+  }
+}
+```
 
 ## REST Endpoints
 

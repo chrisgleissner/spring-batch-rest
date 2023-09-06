@@ -2,7 +2,7 @@
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.chrisgleissner/spring-batch-rest-api)](https://search.maven.org/artifact/com.github.chrisgleissner/spring-batch-rest-api/)
 [![Javadocs](https://www.javadoc.io/badge/com.github.chrisgleissner/spring-batch-rest-api.svg)](https://www.javadoc.io/doc/com.github.chrisgleissner/spring-batch-rest-api)
-![Build Status](https://github.com/chrisgleissner/spring-batch-rest/actions/workflows/build.yml/badge.svg)
+[![Build Status](https://github.com/chrisgleissner/spring-batch-rest/actions/workflows/build.yml/badge.svg)](https://github.com/chrisgleissner/spring-batch-rest/actions)
 [![Coverage Status](https://coveralls.io/repos/github/chrisgleissner/spring-batch-rest/badge.svg?branch=master)](https://coveralls.io/github/chrisgleissner/spring-batch-rest?branch=master)
 [![Maintainability](https://api.codeclimate.com/v1/badges/2267ddd7cbbfc5e22b86/maintainability)](https://codeclimate.com/github/chrisgleissner/spring-batch-rest/maintainability)
 

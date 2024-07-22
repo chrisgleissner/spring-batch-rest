@@ -30,7 +30,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>29.0-jre</version>
+            <version>33.2.1-jre</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -40,7 +40,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.2.33</version>
+            <version>1.8.0</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -79,7 +79,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.0.0-M3</version>
+                <version>3.5.0</version>
                 <executions>
                     <execution>
                         <id>enforce-versions</id>
